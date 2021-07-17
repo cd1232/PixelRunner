@@ -28,7 +28,7 @@ public class SpikeTrap : TrapBase
 				PlayerAutoRunner autoRunner = resultGameObject.GetComponent<PlayerAutoRunner>();
 				if (autoRunner)
 				{
-					autoRunner.Kill();
+					autoRunner.Kill(gameObject);
 				}
 			}
 		}
