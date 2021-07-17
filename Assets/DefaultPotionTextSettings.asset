@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68df26b543690ab42a578b139d348a9c, type: 3}
+  m_Name: DefaultPotionTextSettings
+  m_EditorClassIdentifier: 
+  m_startText: I want a
+  m_potionColorText:
+  - color: 0
+    text: Red
+  - color: 1
+    text: Blue
+  - color: 2
+    text: Yellow
+  m_healPowerText:
+  - healPower: 0
+    text: Weak
+  - healPower: 1
+    text: Medium
+  - healPower: 2
+    text: Strong
+  m_speedText:
+  - speed: 1
+    text: kinda fast
+  - speed: 2
+    text: fast
+  - speed: 3
+    text: really fast
