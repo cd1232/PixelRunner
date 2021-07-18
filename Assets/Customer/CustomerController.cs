@@ -3,16 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum CustomerState
+{
+	Spawned,
+	TravellingToPotionPickup,
+	TravellingToDungeon
+};
+
 public class CustomerController : MonoBehaviour
 {
-	private enum CustomerState
-	{
-		Spawned,
-		TravellingToPotionPickup,
-		TravellingToDungeon
-	};
-
-
 	private Vector3 m_positionToMoveTo;
 
 	public Action<GameObject> OnCustomerReachedDesk;
@@ -25,7 +24,12 @@ public class CustomerController : MonoBehaviour
 	[SerializeField]
 	private Potion m_wantedPotion;
 
+	public Potion m_potionThatWasMade;
+	public int m_floorDeathGuess = -1;
+
 	private CustomerState m_customerState = CustomerState.Spawned;
+
+	private int m_positionInQueue = -1;
 
     void Update()
     {
@@ -36,11 +40,11 @@ public class CustomerController : MonoBehaviour
 			if (Vector3.Distance(transform.position, m_positionToMoveTo) < 0.05f)
 			{
 				m_hasPositionToMoveTowards = false;
-				if (m_customerState == CustomerState.TravellingToPotionPickup)
+				if (m_customerState == CustomerState.TravellingToPotionPickup && m_positionInQueue == 0)
 				{
 					OnCustomerReachedDesk?.Invoke(gameObject);
 				}
-				else
+				else if (m_customerState == CustomerState.TravellingToDungeon)
 				{
 					MoveToDungeon();
 				}
@@ -48,11 +52,17 @@ public class CustomerController : MonoBehaviour
 		}
     }
 
-	public void SetPositionToMoveTo(Vector3 positionToMoveTo)
+	public void SetPositionToMoveTo(Vector3 positionToMoveTo, CustomerState newState, int positionInQueue)
 	{
-		m_customerState++;
+		m_customerState = newState;
 		m_positionToMoveTo = positionToMoveTo;
 		m_hasPositionToMoveTowards = true;
+		m_positionInQueue = positionInQueue;
+	}
+
+	public int GetPositionInQueue()
+	{
+		return m_positionInQueue;
 	}
 
 	public void SetPotion(Potion wantedPotion)

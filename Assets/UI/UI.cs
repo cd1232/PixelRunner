@@ -17,22 +17,61 @@ public class UI : MonoBehaviour
 	[SerializeField]
 	private TextMeshProUGUI m_announcementText;
 
+	[SerializeField]
+	private GameObject m_dungeonListPanel;
+
+	[SerializeField]
+	private GameObject m_dungeonEntryUIPrefab;
+
+	private List<KeyValuePair<DungeonEntry, float>> m_dungeonEntries = new List<KeyValuePair<DungeonEntry, float>>();
+	private List<CustomerController> m_dungeonCustomerList = new List<CustomerController>();
+
 	private enum PotionMakingStage
 	{
 		Waiting,
 		FirstStage,
 		SecondStage,
-		ThirdStage
+		ThirdStage,
+		FourthStage // Guess what floor they will die on
 	}
 
 	private PotionMakingStage m_potionMakingStage;
 
 	private HealPower m_currentHealPower = HealPower.Invalid;
 	private PotionColor m_currentPotionColor = PotionColor.Invalid;
-	private int m_currentSpeed;
+	private int m_currentSpeed = 0;
+	private int m_currentFloor = 0;
 
-	private void Awake()
+	private void Start()
 	{
+		GameManager.GetInstance().OnNewDungeonCustomer += OnNewDungeonCustomer;
+	}
+
+	void OnNewDungeonCustomer(GameObject newCustomer)
+	{
+		GameObject dungeonEntryObject = Instantiate(m_dungeonEntryUIPrefab, m_dungeonListPanel.transform);
+		DungeonEntry dungeonEntry = dungeonEntryObject.GetComponent<DungeonEntry>();
+
+		m_dungeonCustomerList.Add(newCustomer.GetComponent<CustomerController>());
+		m_dungeonEntries.Add(new KeyValuePair<DungeonEntry, float>(dungeonEntry, 10.0f));
+
+		dungeonEntry.SetInfo(null, "Status: Alive", "Floor Guess: " + newCustomer.GetComponent<CustomerController>().m_floorDeathGuess);
+	}
+
+	private void Update()
+	{
+		for (int i = 0; i < m_dungeonEntries.Count; ++i)
+		{
+			if (m_dungeonEntries[i].Value > 0.0f)
+			{
+				m_dungeonEntries[i] = new KeyValuePair<DungeonEntry, float>(m_dungeonEntries[i].Key, m_dungeonEntries[i].Value - Time.deltaTime);
+			}
+
+
+		}
+
+		// Need to remove entries on ui prefab
+		//m_dungeonEntries.RemoveAll(dungeonEntry => dungeonEntry.Value <= 0.0f);
 	}
 
 	void OnSubmitPotion()
@@ -59,6 +98,9 @@ public class UI : MonoBehaviour
 			case PotionMakingStage.ThirdStage:
 				m_currentSpeed++;
 				break;
+			case PotionMakingStage.FourthStage:
+				m_currentFloor++;
+				break;
 		}
 
 		UpdatePotionText();
@@ -80,6 +122,9 @@ public class UI : MonoBehaviour
 			case PotionMakingStage.ThirdStage:
 				m_currentSpeed = 0;
 				break;
+			case PotionMakingStage.FourthStage:
+				m_currentFloor = 0;
+				break;
 		}
 
 		UpdatePotionText();
@@ -97,6 +142,9 @@ public class UI : MonoBehaviour
 				break;
 			case PotionMakingStage.ThirdStage:
 				m_currentPotionText.text = "Potion Speed: " + (m_currentSpeed > 3 ? "Invalid" : m_currentSpeed.ToString());
+				break;
+			case PotionMakingStage.FourthStage:
+				m_currentPotionText.text = "What floor will they die on? " + (m_currentFloor <= 10 ? m_currentFloor.ToString() : "Invalid");
 				break;
 		}
 	}
@@ -135,11 +183,11 @@ public class UI : MonoBehaviour
 
 	public void SwitchToNextStage()
 	{
-		if (m_potionMakingStage == PotionMakingStage.ThirdStage)
+		if (m_potionMakingStage == PotionMakingStage.FourthStage)
 		{
 			m_potionMakingStage = PotionMakingStage.Waiting;
 			StartCoroutine(DisplayPotionMade());
-			GameManager.GetInstance().PotionCompleted();
+			GameManager.GetInstance().PotionCompleted(new Potion(m_currentHealPower, m_currentPotionColor, m_currentSpeed), m_currentFloor);
 			ResetCurrentPotion();
 			m_currentPotionText.text = "Waiting...";
 		}
@@ -157,6 +205,7 @@ public class UI : MonoBehaviour
 		m_currentHealPower = HealPower.Invalid;
 		m_currentPotionColor = PotionColor.Invalid;
 		m_currentSpeed = 0;
+		m_currentFloor = 0;
 	}
 
 	IEnumerator DisplayPotionMade()
@@ -173,44 +222,10 @@ public class UI : MonoBehaviour
 		m_announcementText.text = "";
 	}
 
-	//void UpdateDefaultPotionText()
-	//{
-	//	switch (m_potionMakingStage)
-	//	{
-	//		case PotionMakingStage.Waiting:
-	//			m_currentPotionText.text = "Waiting...";
-	//			break;
-	//		case PotionMakingStage.FirstStage:
-	//			m_currentPotionText.text = "Potion Strength: None";
-	//			break;
-	//		case PotionMakingStage.SecondStage:
-	//			m_currentPotionText.text = "Potion Color: None";
-	//			break;
-	//		case PotionMakingStage.ThirdStage:
-	//			m_currentPotionText.text = "Potion Speed: None";
-	//			break;
-	//	}
-	//}
-
 	public void OnCustomerReachedDesk(CustomerController customer)
 	{
 		Potion wantedPotion = customer.GetWantedPotion();
-
-		//string healPowerText = "";
-		//string potionColorText = "";
 		string speedText = "";
-
-		//foreach (var healPower in m_potionTextSettings.m_healPowerText)
-		//{
-		//	if (healPower.healPower == wantedPotion.m_healPower)
-		//		healPowerText = healPower.text;
-		//}
-
-		//foreach (var potionColor in m_potionTextSettings.m_potionColorText)
-		//{
-		//	if (potionColor.color == wantedPotion.m_potionColor)
-		//		potionColorText = potionColor.text;
-		//}
 
 		foreach (var speed in m_potionTextSettings.m_speedText)
 		{
