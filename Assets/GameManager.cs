@@ -1,230 +1,154 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-[Serializable]
-public enum HealPower
+public class HeroInDungeon
 {
-	Invalid = -1,
-	Weak,
-	Medium,
-	Strong
-};
-
-[Serializable]
-public enum PotionColor
-{
-	Invalid = -1,
-	Red,
-	Blue,
-	Yellow
-};
-
-[Serializable]
-public class Potion
-{
-	public Potion(HealPower healPower, PotionColor potionColor, int speed)
+	public HeroInDungeon(Hero hero)
 	{
-		m_healPower = healPower;
-		m_potionColor = potionColor;
-		m_speed = speed;
+		m_hero = hero;
 	}
 
-	public HealPower m_healPower;
-	public PotionColor m_potionColor;
-	public int m_speed;
-	public readonly int m_maxSpeed = 3;
+	public Hero m_hero;
+	public bool m_shouldDelete = false;
 }
 
 public class GameManager : MonoBehaviour
 {
-	#region Singleton
-	public static GameManager GetInstance()
-	{
-		return Instance;
-	}
+	//#region Singleton
+	//public static GameManager GetInstance()
+	//{
+	//	return Instance;
+	//}
 
-	private static GameManager Instance;
-	#endregion
-
-	[SerializeField]
-	private GameObject m_customerPrefab;
+	//private static GameManager Instance;
+	//#endregion
 
 	[SerializeField]
-	private UI m_uiObject;
+	private float m_dungeonCountdown = 3.0f;
+
+	public Action<Hero> OnDisplayHero;
+	public Action OnHideHero;
+	public Action<KeyValuePair<HeroInDungeon, float>> OnAddHeroToDungeon;
+	public Action<HeroInDungeon> OnHeroFinishedDungeon;
+
+	private List<Hero> m_heroes = new List<Hero>();
+	private List<KeyValuePair<HeroInDungeon, float>> m_dungeonHeroes = new List<KeyValuePair<HeroInDungeon, float>>();
 
 	[SerializeField]
-	private List<Transform> m_customerQueuePositions = new List<Transform>();
+	private Hero m_currentHero;
 
-	[SerializeField]
-	private Transform m_doorPosition;
-
-	[SerializeField]
-	private float m_minSpawnTimeBetweenCustomers = 2.0f;
-
-	[SerializeField]
-	private float m_maxSpawnTimeBetweenCustomers = 4.0f;
-
-	private float m_spawnTimeTimer = 0.0f;
-
-	private GameObject m_customerSpawnPosition;
-
-	private const int customerListSize = 5;
-	GameObject[] m_customerList = new GameObject[customerListSize];
-	private List<GameObject> m_dungeonCustomerList = new List<GameObject>();
-	private Dictionary<Transform, GameObject> m_queueCustomerDictonary = new Dictionary<Transform, GameObject>();
-
-
-	public Action OnPotionCompleted;
-	public Action<GameObject> OnNewDungeonCustomer;
+	private int m_currentMoney = 50;
+	private Potion m_chosenPotion;
 
 	void Awake()
 	{
-		if (Instance == null)
-			Instance = this;
-		else
-			Destroy(gameObject);
-
-		GameObject[] spawnPositions = GameObject.FindGameObjectsWithTag(GameTags.s_spawnPositionTag);
-		if (spawnPositions.Length > 0)
-		{
-			m_customerSpawnPosition = spawnPositions[0];
-		}
+		//if (Instance == null)
+		//	Instance = this;
+		//else
+		//	Destroy(gameObject);
 	}
 
 	private void Start()
 	{
-		foreach (var customerQueuePosition in m_customerQueuePositions)
-		{
-			Vector3 ignoreYPosition = customerQueuePosition.position;
-			ignoreYPosition.y = -5.5f;
-			customerQueuePosition.position = ignoreYPosition;
+		m_chosenPotion = new Potion();
+		DisplayHero();
+	}
 
-			m_queueCustomerDictonary[customerQueuePosition] = null;
+	void DisplayHero()
+	{
+		Hero newHero = GenerateNewHero();
+		m_heroes.Add(newHero);
+		m_currentHero = newHero;
+		OnDisplayHero?.Invoke(newHero);
+	}
+
+	Hero GenerateNewHero()
+	{
+		Debug.Log("Generating new hero");
+		Hero newHero = new Hero();
+		HeroStats newHeroStats = new HeroStats();
+
+		newHeroStats.m_armorType = (ArmorType) Random.Range(0, 3);
+		newHeroStats.m_weaponType = (WeaponType) Random.Range(0, 3);
+
+		int heroMaxHP = 4;
+		int heroMaxHPLevel = Random.Range(0, 3);
+		switch (heroMaxHPLevel)
+		{
+			case 0:
+				heroMaxHP = 4;
+				break;
+			case 1:
+				heroMaxHP = 8;
+				break;
+			case 2:
+				heroMaxHP = 12;
+				break;
 		}
+
+		newHeroStats.m_maxHP = heroMaxHP;
+		newHeroStats.m_currentHP = Random.Range(1, heroMaxHP + 1);
+
+		newHero.m_heroStats = newHeroStats;
+		newHero.m_wantedPotion = new Potion();
+
+		return newHero;
+	}
+
+	public int GetCurrentMoney()
+	{
+		return m_currentMoney;
+	}
+
+	public Potion GetMadePotion()
+	{
+		return m_chosenPotion;
+	}
+
+	public void SetCreatedPotion(HealingStrength strength, BuffType buffType, PotionColor potionColor)
+	{
+		m_chosenPotion.m_healingStrength = strength;
+		m_chosenPotion.m_buffType = buffType;
+		m_chosenPotion.m_potionColor = potionColor;
+	}
+
+	public void SendHeroToDungeon()
+	{
+		m_currentHero.m_createdPotion = m_chosenPotion;
+
+		HeroInDungeon heroInDungeon = new HeroInDungeon(m_currentHero);
+		m_dungeonHeroes.Add(new KeyValuePair<HeroInDungeon, float>(heroInDungeon, m_dungeonCountdown));
+		OnAddHeroToDungeon?.Invoke(new KeyValuePair<HeroInDungeon, float>(heroInDungeon, m_dungeonCountdown));
+
+		m_currentHero = null;
+		OnHideHero?.Invoke();
+		m_heroes.Remove(m_currentHero);
+		DisplayHero();
 	}
 
 	private void Update()
 	{
-		if (!IsQueueFull())
+		for (int i = 0; i < m_dungeonHeroes.Count; ++i)
 		{
-			if (m_spawnTimeTimer > 0.0f)
+			if (m_dungeonHeroes[i].Value > 0.0f)
 			{
-				m_spawnTimeTimer -= Time.deltaTime;
+				m_dungeonHeroes[i] = new KeyValuePair<HeroInDungeon, float>(m_dungeonHeroes[i].Key, m_dungeonHeroes[i].Value - Time.deltaTime);
+
 			}
 
-			if (m_spawnTimeTimer <= 0.0f)
+			if (m_dungeonHeroes[i].Value <= 0.0f)
 			{
-				SpawnCustomer();
-				m_spawnTimeTimer = Random.Range(m_minSpawnTimeBetweenCustomers, m_maxSpawnTimeBetweenCustomers);
-			}
-		}
-	}
-
-	public void PotionCompleted(Potion potionMade, int floorGuess)
-	{
-		OnPotionCompleted?.Invoke();
-		if (m_customerList[0] != null)
-		{
-			CustomerController customerController = m_customerList[0].GetComponent<CustomerController>();
-
-			customerController.SetPositionToMoveTo(m_doorPosition.position, CustomerState.TravellingToDungeon, -1);
-			customerController.m_potionThatWasMade = potionMade;
-			customerController.m_floorDeathGuess = floorGuess;
-
-			m_dungeonCustomerList.Add(m_customerList[0]);
-			OnNewDungeonCustomer?.Invoke(m_customerList[0]);
-
-			m_customerList[0] = null;
-			m_queueCustomerDictonary[m_customerQueuePositions[0]] = null;
-			MoveUpCustomers();
-		}
-
-	}
-
-	void MoveUpCustomers()
-	{
-		for (int i = 0; i < customerListSize - 1; ++i)
-		{
-			if (m_customerList[i + 1] != null)
-			{
-				// i will be max 3 and i+1 will be 4 (the last position in the queue)
-				m_customerList[i] = m_customerList[i + 1];
-				m_customerList[i + 1] = null;
-				m_queueCustomerDictonary[m_customerQueuePositions[i]] = m_customerList[i];
-				m_queueCustomerDictonary[m_customerQueuePositions[i + 1]] = null;
-
-				CustomerController newCustomerController = m_customerList[i].GetComponent<CustomerController>();
-				Vector3 newPosition = m_customerQueuePositions[i].position;
-
-				Debug.Log("Setting new position in queue to " + (newCustomerController.GetPositionInQueue() - 1).ToString());
-				newCustomerController.SetPositionToMoveTo(newPosition, CustomerState.TravellingToPotionPickup, newCustomerController.GetPositionInQueue() - 1);
-			}
-		}
-	}
-
-
-	private bool IsQueueFull()
-	{
-		for (int i = 0; i < 5; ++i)
-		{
-			if (m_customerList[i] == null)
-			{
-				return false;
+				OnHeroFinishedDungeon?.Invoke(m_dungeonHeroes[i].Key);
+				m_dungeonHeroes[i].Key.m_shouldDelete = true;
 			}
 		}
 
-		return true;
-	}
-
-
-	private void SpawnCustomer()
-	{
-		if (m_customerPrefab == null)
-			return;
-
-		GameObject newCustomer = Instantiate(m_customerPrefab, m_customerSpawnPosition.transform.position, Quaternion.identity);
-
-		// Set where the customer should go to
-		Transform moveToPosition = transform;
-		bool wasPositionFound = false;
-
-		int positionInQueue = 0;
-		foreach (KeyValuePair<Transform, GameObject> queuePosition in m_queueCustomerDictonary)
+		if (m_dungeonHeroes.Count > 0)
 		{
-			if (queuePosition.Value == null)
-			{
-				moveToPosition = queuePosition.Key;
-				wasPositionFound = true;
-				break;
-			}
-			positionInQueue++;
+			m_dungeonHeroes.RemoveAll(hero => hero.Key.m_shouldDelete == true);
 		}
-
-		if (wasPositionFound)
-		{
-			m_queueCustomerDictonary[moveToPosition] = newCustomer;
-			CustomerController newCustomerController = newCustomer.GetComponent<CustomerController>();
-
-			GenerateRandomCustomerPreferences(newCustomerController);
-			newCustomerController.SetPositionToMoveTo(moveToPosition.position, CustomerState.TravellingToPotionPickup, positionInQueue);
-			newCustomerController.OnCustomerReachedDesk += OnCustomerReachedDesk;
-		}
-
-		m_customerList[positionInQueue] = newCustomer;
-	}
-
-	private void GenerateRandomCustomerPreferences(CustomerController newCustomer)
-	{
-		Potion newPotion = new Potion((HealPower)Random.Range(0, 3), (PotionColor)Random.Range(0, 3), Random.Range(1, 4));
-		newCustomer.SetPotion(newPotion);
-	}
-
-	void OnCustomerReachedDesk(GameObject customer)
-	{
-		m_uiObject.OnCustomerReachedDesk(customer.GetComponent<CustomerController>());
-	}
+	}	
 
 }

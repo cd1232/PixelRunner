@@ -2,242 +2,177 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UI : MonoBehaviour
 {
 	[SerializeField]
-	private PotionTextSettings m_potionTextSettings;
+	private CustomerUI m_customerUI;
 
 	[SerializeField]
-	private TextMeshProUGUI m_text;
+	private TextMeshProUGUI m_currentMoney;
 
 	[SerializeField]
-	private TextMeshProUGUI m_currentPotionText;
+	private GameObject m_dungeonList;
 
 	[SerializeField]
-	private TextMeshProUGUI m_announcementText;
+	private GameObject m_dungeonEntryPrefab;
 
 	[SerializeField]
-	private GameObject m_dungeonListPanel;
+	private GameObject m_potionScreen;
 
 	[SerializeField]
-	private GameObject m_dungeonEntryUIPrefab;
+	private GameObject m_betScreen;
 
-	private List<KeyValuePair<DungeonEntry, float>> m_dungeonEntries = new List<KeyValuePair<DungeonEntry, float>>();
-	private List<CustomerController> m_dungeonCustomerList = new List<CustomerController>();
+	[SerializeField]
+	private BetResultPopup m_popUp;
 
-	private enum PotionMakingStage
-	{
-		Waiting,
-		FirstStage,
-		SecondStage,
-		ThirdStage,
-		FourthStage // Guess what floor they will die on
-	}
+	[SerializeField]
+	private Button m_nextButton;
 
-	private PotionMakingStage m_potionMakingStage;
+	[SerializeField]
+	private SoldPotionStatusUI m_soldPotionStatus;
 
-	private HealPower m_currentHealPower = HealPower.Invalid;
-	private PotionColor m_currentPotionColor = PotionColor.Invalid;
-	private int m_currentSpeed = 0;
-	private int m_currentFloor = 0;
+	[SerializeField]
+	private GameManager gameManager;
+
+	private List<Toggle> m_allToggles = new List<Toggle>();
+
+	private Hero m_currentlyDisplayedHero;
+
+	private List<DungeonEntry> m_dungeonEntries = new List<DungeonEntry>();
 
 	private void Start()
 	{
-		GameManager.GetInstance().OnNewDungeonCustomer += OnNewDungeonCustomer;
-	}
+		gameManager.OnDisplayHero += OnDisplayHero;
+		gameManager.OnHideHero += OnHideHero;
+		gameManager.OnAddHeroToDungeon += OnAddHeroToDungeon;
+		gameManager.OnHeroFinishedDungeon += OnHeroFinishedInDungeon;
 
-	void OnNewDungeonCustomer(GameObject newCustomer)
-	{
-		GameObject dungeonEntryObject = Instantiate(m_dungeonEntryUIPrefab, m_dungeonListPanel.transform);
-		DungeonEntry dungeonEntry = dungeonEntryObject.GetComponent<DungeonEntry>();
+		m_currentMoney.text = "$" + gameManager.GetCurrentMoney();
 
-		m_dungeonCustomerList.Add(newCustomer.GetComponent<CustomerController>());
-		m_dungeonEntries.Add(new KeyValuePair<DungeonEntry, float>(dungeonEntry, 10.0f));
-
-		dungeonEntry.SetInfo(null, "Status: Alive", "Floor Guess: " + newCustomer.GetComponent<CustomerController>().m_floorDeathGuess);
-	}
-
-	private void Update()
-	{
-		for (int i = 0; i < m_dungeonEntries.Count; ++i)
+		Toggle[] foundToggles = m_potionScreen.GetComponentsInChildren<Toggle>();
+		foreach(Toggle t in foundToggles)
 		{
-			if (m_dungeonEntries[i].Value > 0.0f)
+			t.onValueChanged.AddListener(OnToggleChanged);
+		}
+
+		m_nextButton.onClick.AddListener(SwitchToBetScreen);
+
+		m_allToggles.AddRange(foundToggles);
+	}
+
+	public void SwitchToBetScreen()
+	{
+		if (gameManager.GetMadePotion() == null)
+		{
+			Debug.Log("Made potion is null??");
+		}
+
+		m_soldPotionStatus.SetSoldPotionText(gameManager.GetMadePotion());
+
+		m_potionScreen.SetActive(false);
+		m_betScreen.SetActive(true);
+
+		m_nextButton.onClick.RemoveListener(SwitchToBetScreen);
+		m_nextButton.onClick.AddListener(FinishBetScreen);
+		m_nextButton.GetComponentInChildren<TextMeshProUGUI>().text = "Next Hero";		
+	}
+
+	public void FinishBetScreen()
+	{
+		gameManager.SendHeroToDungeon();
+
+		foreach(Toggle t in m_allToggles)
+		{
+			t.isOn = false;
+		}
+
+		m_nextButton.onClick.RemoveListener(FinishBetScreen);
+		m_nextButton.onClick.AddListener(SwitchToBetScreen);
+		m_nextButton.GetComponentInChildren<TextMeshProUGUI>().text = "Next";
+		m_potionScreen.SetActive(true);
+		m_betScreen.SetActive(false);
+	}
+
+	void OnAddHeroToDungeon(KeyValuePair<HeroInDungeon, float> dungeonHero)
+	{
+		GameObject newDungeonEntryObject = Instantiate(m_dungeonEntryPrefab, m_dungeonList.transform);
+		DungeonEntry newDungeonEntry = newDungeonEntryObject.GetComponent<DungeonEntry>();
+		newDungeonEntry.OnPopup += OnPopup;
+		newDungeonEntry.Setup(dungeonHero.Key);
+		m_dungeonEntries.Add(newDungeonEntry);
+	}
+
+	void OnHeroFinishedInDungeon(HeroInDungeon heroInDungeon)
+	{
+		DungeonEntry foundEntry = m_dungeonEntries.Find(dungeonEntry => dungeonEntry.GetHero() == heroInDungeon);
+		if (foundEntry != null)
+		{
+			foundEntry.SetComplete();
+		}
+	}
+
+	void OnPopup(HeroInDungeon heroInDungeon, DungeonEntry dungeonEntry)
+	{
+		dungeonEntry.OnPopup -= OnPopup;
+		m_popUp.OnReceiveButtonPressed += ReceivePayment;
+		m_popUp.ShowInfo(heroInDungeon);
+	}
+
+	void ReceivePayment()
+	{
+		//TODO receive payment
+		m_popUp.gameObject.SetActive(false);
+		m_popUp.OnReceiveButtonPressed -= ReceivePayment;
+	}
+
+	void OnToggleChanged(bool bNewValue)
+	{
+		if (bNewValue)
+		{
+			List<int> newCombinations = new List<int>();
+
+			int strength = -1;
+			int buffType = -1;
+			int color = -1;
+
+			for (int i = 0; i < 3; ++i)
 			{
-				m_dungeonEntries[i] = new KeyValuePair<DungeonEntry, float>(m_dungeonEntries[i].Key, m_dungeonEntries[i].Value - Time.deltaTime);
+				if (m_allToggles[i].isOn)
+				{
+					strength = i;
+				}
 			}
 
+			for (int i = 3; i < 6; ++i)
+			{
+				if (m_allToggles[i].isOn)
+				{
+					buffType = i - 3;
+				}
+			}
 
-		}
+			for (int i = 6; i < m_allToggles.Count; ++i)
+			{
+				if (m_allToggles[i].isOn)
+				{
+					color = i - 6;
+				}
+			}
 
-		// Need to remove entries on ui prefab
-		//m_dungeonEntries.RemoveAll(dungeonEntry => dungeonEntry.Value <= 0.0f);
-	}
-
-	void OnSubmitPotion()
-	{
-		if (m_potionMakingStage == PotionMakingStage.Waiting)
-			return;
-
-		SwitchToNextStage();		
-	}
-
-	void OnSwitch()
-	{
-		if (m_potionMakingStage == PotionMakingStage.Waiting)
-			return;
-
-		switch (m_potionMakingStage)
-		{
-			case PotionMakingStage.FirstStage:
-				m_currentHealPower++;
-				break;
-			case PotionMakingStage.SecondStage:
-				m_currentPotionColor++;
-				break;
-			case PotionMakingStage.ThirdStage:
-				m_currentSpeed++;
-				break;
-			case PotionMakingStage.FourthStage:
-				m_currentFloor++;
-				break;
-		}
-
-		UpdatePotionText();
-	}
-
-	void OnReset()
-	{
-		if (m_potionMakingStage == PotionMakingStage.Waiting)
-			return;
-
-		switch (m_potionMakingStage)
-		{
-			case PotionMakingStage.FirstStage:
-				m_currentHealPower = 0;
-				break;
-			case PotionMakingStage.SecondStage:
-				m_currentPotionColor = 0;
-				break;
-			case PotionMakingStage.ThirdStage:
-				m_currentSpeed = 0;
-				break;
-			case PotionMakingStage.FourthStage:
-				m_currentFloor = 0;
-				break;
-		}
-
-		UpdatePotionText();
-	}
-
-	private void UpdatePotionText()
-	{
-		switch (m_potionMakingStage)
-		{
-			case PotionMakingStage.FirstStage:
-				m_currentPotionText.text = "Potion Strength: " + GetPotionStrengthText();
-				break;
-			case PotionMakingStage.SecondStage:
-				m_currentPotionText.text = "Potion Color: " + GetPotionColorText();
-				break;
-			case PotionMakingStage.ThirdStage:
-				m_currentPotionText.text = "Potion Speed: " + (m_currentSpeed > 3 ? "Invalid" : m_currentSpeed.ToString());
-				break;
-			case PotionMakingStage.FourthStage:
-				m_currentPotionText.text = "What floor will they die on? " + (m_currentFloor <= 10 ? m_currentFloor.ToString() : "Invalid");
-				break;
+			gameManager.SetCreatedPotion((HealingStrength)strength, (BuffType)buffType, (PotionColor)color);
 		}
 	}
 
-	private string GetPotionStrengthText()
+	void OnDisplayHero(Hero hero)
 	{
-		if ((int)m_currentHealPower >= 3)
-		{
-			return "Invalid";
-		}
-
-		return m_currentHealPower.ToString();
+		m_currentlyDisplayedHero = hero;
+		m_customerUI.SetCustomer(hero);
 	}
 
-	private string GetPotionColorText()
+	void OnHideHero()
 	{
-		if ((int)m_currentPotionColor >= 3)
-		{
-			return "Invalid";
-		}
-
-		return m_currentPotionColor.ToString();
+		m_customerUI.SetCustomer(null);
 	}
-
-	private string GetSpeedText()
-	{
-		string speedText = "Invalid";
-		foreach (var speed in m_potionTextSettings.m_speedText)
-		{
-			if (speed.speed == m_currentSpeed)
-				speedText = speed.text;
-		}
-
-		return speedText;
-	}
-
-	public void SwitchToNextStage()
-	{
-		if (m_potionMakingStage == PotionMakingStage.FourthStage)
-		{
-			m_potionMakingStage = PotionMakingStage.Waiting;
-			StartCoroutine(DisplayPotionMade());
-			GameManager.GetInstance().PotionCompleted(new Potion(m_currentHealPower, m_currentPotionColor, m_currentSpeed), m_currentFloor);
-			ResetCurrentPotion();
-			m_currentPotionText.text = "Waiting...";
-		}
-		else
-		{
-			m_potionMakingStage++;
-			m_announcementText.text = "";
-		}
-
-		UpdatePotionText();
-	}
-
-	void ResetCurrentPotion()
-	{
-		m_currentHealPower = HealPower.Invalid;
-		m_currentPotionColor = PotionColor.Invalid;
-		m_currentSpeed = 0;
-		m_currentFloor = 0;
-	}
-
-	IEnumerator DisplayPotionMade()
-	{
-		string speedText = "";
-		foreach (var speed in m_potionTextSettings.m_speedText)
-		{
-			if (speed.speed == m_currentSpeed)
-				speedText = speed.text;
-		}
-
-		m_announcementText.text = "You made a " + m_currentHealPower + " " + m_currentPotionColor + " that was " + GetSpeedText();
-		yield return new WaitForSeconds(3);
-		m_announcementText.text = "";
-	}
-
-	public void OnCustomerReachedDesk(CustomerController customer)
-	{
-		Potion wantedPotion = customer.GetWantedPotion();
-		string speedText = "";
-
-		foreach (var speed in m_potionTextSettings.m_speedText)
-		{
-			if (speed.speed == wantedPotion.m_speed)
-				speedText = speed.text;
-		}
-
-		string textToDisplay = m_potionTextSettings.m_startText + " " + wantedPotion.m_healPower + " " + wantedPotion.m_potionColor + " potion that hits me " + speedText;
-
-		m_text.text = textToDisplay;
-
-		SwitchToNextStage();
-	}
-
 }

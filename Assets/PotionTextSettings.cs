@@ -13,7 +13,7 @@ public class PotionColorText
 [Serializable]
 public class HealPowerText
 {
-	public HealPower healPower;
+	public HealingStrength healPower;
 	public string text;
 }
 
