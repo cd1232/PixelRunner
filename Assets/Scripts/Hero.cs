@@ -46,4 +46,5 @@ public class Hero
 	public Potion m_wantedPotion;
 	[SerializeField]
 	public Potion m_createdPotion;
+	public int m_selectedFloor = -1;
 }

@@ -33,23 +33,25 @@ public class UI : MonoBehaviour
 	[SerializeField]
 	private SoldPotionStatusUI m_soldPotionStatus;
 
-	[SerializeField]
-	private GameManager gameManager;
-
 	private List<Toggle> m_allToggles = new List<Toggle>();
 
 	private Hero m_currentlyDisplayedHero;
+
+	private HeroInDungeon m_heroPopup;
 
 	private List<DungeonEntry> m_dungeonEntries = new List<DungeonEntry>();
 
 	private void Start()
 	{
+		GameManager gameManager = GameManager.GetInstance();
+
 		gameManager.OnDisplayHero += OnDisplayHero;
 		gameManager.OnHideHero += OnHideHero;
 		gameManager.OnAddHeroToDungeon += OnAddHeroToDungeon;
 		gameManager.OnHeroFinishedDungeon += OnHeroFinishedInDungeon;
+		gameManager.OnMoneyChanged += OnMoneyChanged;
 
-		m_currentMoney.text = "$" + gameManager.GetCurrentMoney();
+		m_currentMoney.text = "$" + gameManager.GetCurrentMoney().ToString("F2");
 
 		Toggle[] foundToggles = m_potionScreen.GetComponentsInChildren<Toggle>();
 		foreach(Toggle t in foundToggles)
@@ -64,12 +66,7 @@ public class UI : MonoBehaviour
 
 	public void SwitchToBetScreen()
 	{
-		if (gameManager.GetMadePotion() == null)
-		{
-			Debug.Log("Made potion is null??");
-		}
-
-		m_soldPotionStatus.SetSoldPotionText(gameManager.GetMadePotion());
+		m_soldPotionStatus.SetSoldPotionText(GameManager.GetInstance().GetMadePotion());
 
 		m_potionScreen.SetActive(false);
 		m_betScreen.SetActive(true);
@@ -81,7 +78,7 @@ public class UI : MonoBehaviour
 
 	public void FinishBetScreen()
 	{
-		gameManager.SendHeroToDungeon();
+		GameManager.GetInstance().SendHeroToDungeon();
 
 		foreach(Toggle t in m_allToggles)
 		{
@@ -114,34 +111,44 @@ public class UI : MonoBehaviour
 	}
 
 	void OnPopup(HeroInDungeon heroInDungeon, DungeonEntry dungeonEntry)
-	{
+	{		
 		dungeonEntry.OnPopup -= OnPopup;
+		Destroy(dungeonEntry.gameObject);
+
 		m_popUp.OnReceiveButtonPressed += ReceivePayment;
 		m_popUp.ShowInfo(heroInDungeon);
+		m_heroPopup = heroInDungeon;
+	}
+
+	void OnMoneyChanged(float newAmount)
+	{
+		m_currentMoney.text = "$" + newAmount.ToString("F2");
 	}
 
 	void ReceivePayment()
 	{
-		//TODO receive payment
+		GameManager.GetInstance().AddPaymentForHero(m_heroPopup);
 		m_popUp.gameObject.SetActive(false);
 		m_popUp.OnReceiveButtonPressed -= ReceivePayment;
+		m_heroPopup = null;
 	}
 
 	void OnToggleChanged(bool bNewValue)
 	{
 		if (bNewValue)
 		{
+			// TODO change this. Toggles suck.
 			List<int> newCombinations = new List<int>();
 
-			int strength = -1;
-			int buffType = -1;
-			int color = -1;
+			int strength = 0;
+			int buffType = 0;
+			int color = 0;
 
 			for (int i = 0; i < 3; ++i)
 			{
 				if (m_allToggles[i].isOn)
 				{
-					strength = i;
+					strength = i + 1;
 				}
 			}
 
@@ -149,7 +156,7 @@ public class UI : MonoBehaviour
 			{
 				if (m_allToggles[i].isOn)
 				{
-					buffType = i - 3;
+					buffType = i - 2;
 				}
 			}
 
@@ -157,11 +164,11 @@ public class UI : MonoBehaviour
 			{
 				if (m_allToggles[i].isOn)
 				{
-					color = i - 6;
+					color = i - 5;
 				}
 			}
 
-			gameManager.SetCreatedPotion((HealingStrength)strength, (BuffType)buffType, (PotionColor)color);
+			GameManager.GetInstance().SetCreatedPotion((HealingStrength)strength, (BuffType)buffType, (PotionColor)color);
 		}
 	}
 

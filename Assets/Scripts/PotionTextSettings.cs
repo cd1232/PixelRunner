@@ -18,9 +18,9 @@ public class HealPowerText
 }
 
 [Serializable]
-public class SpeedText
+public class BuffText
 {
-	public int speed;
+	public BuffType buffType;
 	public string text;
 }
 
@@ -30,9 +30,8 @@ public class PotionTextSettings : ScriptableObject
 {
 	public string m_startText;
 	
-	public List<PotionColorText> m_potionColorText;
 	public List<HealPowerText> m_healPowerText;
-	public List<SpeedText> m_speedText;
-
+	public List<BuffText> m_buffText;
+	public List<PotionColorText> m_potionColorText;
 }
 

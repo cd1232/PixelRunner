@@ -12,25 +12,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68df26b543690ab42a578b139d348a9c, type: 3}
   m_Name: DefaultPotionTextSettings
   m_EditorClassIdentifier: 
-  m_startText: I want a
+  m_startText: 'I want a Potion that '
+  m_healPowerText:
+  - healPower: 1
+    text: Heals me a little
+  - healPower: 2
+    text: Provides moderate healing
+  - healPower: 3
+    text: Fully heals me
+  m_buffText:
+  - buffType: 1
+    text: Speed
+  - buffType: 2
+    text: Damage
+  - buffType: 3
+    text: Invincibility
+  - buffType: 0
+    text: no buff
   m_potionColorText:
   - color: 0
-    text: Red
+    text: Transparent
   - color: 1
-    text: Blue
+    text: Red
   - color: 2
-    text: Yellow
-  m_healPowerText:
-  - healPower: 0
-    text: Weak
-  - healPower: 1
-    text: Medium
-  - healPower: 2
-    text: Strong
-  m_speedText:
-  - speed: 1
-    text: kinda fast
-  - speed: 2
-    text: fast
-  - speed: 3
-    text: really fast
+    text: Green
+  - color: 3
+    text: Blue
