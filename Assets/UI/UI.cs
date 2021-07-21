@@ -78,6 +78,8 @@ public class UI : MonoBehaviour
 		m_potionScreen.SetActive(false);
 		m_betScreen.SetActive(true);
 
+		GameManager.GetInstance().PotionCreated();
+
 		m_nextButton.onClick.RemoveListener(SwitchToBetScreen);
 		m_nextButton.onClick.AddListener(FinishBetScreen);
 		m_nextButton.GetComponentInChildren<TextMeshProUGUI>().text = "Next Hero";		

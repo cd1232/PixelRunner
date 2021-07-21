@@ -1127,7 +1127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b742bf85cb7b6004682d7fa2fcebb1f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_dungeonCountdown: 10
+  m_dungeonCountdown: 3
   m_rightIngredientPayment: 5
   m_startingMoney: 50
   m_winningAmount: 200

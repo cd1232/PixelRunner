@@ -203,22 +203,26 @@ public class GameManager : MonoBehaviour
 		m_chosenPotion.m_potionColor = potionColor;
 	}
 
-	public void SendHeroToDungeon()
+	public void PotionCreated()
 	{
 		m_currentHero.m_createdPotion = m_chosenPotion;
+		// Probably display both of these separately
+		int moneyGained = Potion.GetNumMatchingIngredidents(m_currentHero.m_createdPotion, m_currentHero.m_wantedPotion) * m_rightIngredientPayment;
 
+
+		AddMoney(moneyGained);
+		OnMoneyChanged?.Invoke(m_currentMoney);
+	}
+
+	public void SendHeroToDungeon()
+	{	
 		HeroInDungeon heroInDungeon = new HeroInDungeon(m_currentHero);
 		m_dungeonHeroes.Add(new KeyValuePair<HeroInDungeon, float>(heroInDungeon, m_dungeonCountdown));
 		OnAddHeroToDungeon?.Invoke(new KeyValuePair<HeroInDungeon, float>(heroInDungeon, m_dungeonCountdown));
 		heroInDungeon.m_bidAmount = m_bidAmount;
 
-		// Probably display both of these separately
-		int moneyGained = Potion.GetNumMatchingIngredidents(m_currentHero.m_createdPotion, m_currentHero.m_wantedPotion) * m_rightIngredientPayment;
-
-
 		// Subtract bid amount from money
-		AddMoney(moneyGained + -m_bidAmount);
-
+		AddMoney(-m_bidAmount);
 
 		OnMoneyChanged?.Invoke(m_currentMoney);
 
