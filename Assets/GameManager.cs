@@ -56,6 +56,7 @@ public class GameManager : MonoBehaviour
 	public Action<HeroInDungeon> OnHeroFinishedDungeon;
 	public Action<float> OnMoneyChanged;
 	public Action OnGameEnded;
+	public Action OnPotionGiven;
 
 	private List<Hero> m_heroes = new List<Hero>();
 	private List<KeyValuePair<HeroInDungeon, float>> m_dungeonHeroes = new List<KeyValuePair<HeroInDungeon, float>>();
@@ -183,6 +184,7 @@ public class GameManager : MonoBehaviour
 	public void AddMoney(float addedAmount)
 	{
 		m_currentMoney += addedAmount;
+		OnMoneyChanged?.Invoke(m_currentMoney);
 
 		if (m_currentMoney > m_highestEarnings)
 		{
@@ -201,10 +203,7 @@ public class GameManager : MonoBehaviour
 		m_chosenPotion.m_healingStrength = strength;
 		m_chosenPotion.m_buffType = buffType;
 		m_chosenPotion.m_potionColor = potionColor;
-	}
 
-	public void PotionCreated()
-	{
 		m_currentHero.m_createdPotion = m_chosenPotion;
 		// Probably display both of these separately
 		int moneyGained = Potion.GetNumMatchingIngredidents(m_currentHero.m_createdPotion, m_currentHero.m_wantedPotion) * m_rightIngredientPayment;
@@ -212,7 +211,10 @@ public class GameManager : MonoBehaviour
 
 		AddMoney(moneyGained);
 		OnMoneyChanged?.Invoke(m_currentMoney);
+
+		OnPotionGiven?.Invoke();
 	}
+
 
 	public void SendHeroToDungeon()
 	{	
@@ -366,6 +368,12 @@ public class GameManager : MonoBehaviour
 				heroInDungeon.m_rewardMultiplier = 0.0f;
 				heroInDungeon.m_MoneyWon = 0.0f;
 				// No reward
+			}
+
+			// Use the last final word if there isn't anything there (as long as they hero hasn't won the dungeon)
+			if (finalWords == "")
+			{
+				finalWords = finalStatSettings.m_finalWords[finalStatSettings.m_finalWords.Count - 1];
 			}
 		}
 

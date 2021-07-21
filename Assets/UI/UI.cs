@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class UI : MonoBehaviour
 {
 	[SerializeField]
-	private CustomerUI m_customerUI;
+	private Customer m_customer;
 
 	[SerializeField]
 	private TextMeshProUGUI m_currentMoney;
@@ -39,13 +39,18 @@ public class UI : MonoBehaviour
 	[SerializeField]
 	private SoldPotionStatusUI m_soldPotionStatus;
 
-	private List<Toggle> m_allToggles = new List<Toggle>();
-
 	private Hero m_currentlyDisplayedHero;
 
 	private HeroInDungeon m_heroPopup;
 
+	private AudioSource m_buttonClickSource;
+
 	private List<DungeonEntry> m_dungeonEntries = new List<DungeonEntry>();
+
+	private void Awake()
+	{
+		m_buttonClickSource = GetComponent<AudioSource>();
+	}
 
 	private void Start()
 	{
@@ -57,18 +62,16 @@ public class UI : MonoBehaviour
 		gameManager.OnHeroFinishedDungeon += OnHeroFinishedInDungeon;
 		gameManager.OnMoneyChanged += OnMoneyChanged;
 		gameManager.OnGameEnded += OnGameEnded;
+		gameManager.OnPotionGiven += SwitchToBetScreen;
 
 		m_currentMoney.text = "$" + gameManager.GetCurrentMoney().ToString("F2");
+		m_nextButton.onClick.AddListener(FinishBetScreen);
+		m_nextButton.GetComponentInChildren<TextMeshProUGUI>().text = "Next Hero";		
+	}
 
-		Toggle[] foundToggles = m_potionScreen.GetComponentsInChildren<Toggle>();
-		foreach(Toggle t in foundToggles)
-		{
-			t.onValueChanged.AddListener(OnToggleChanged);
-		}
-
-		m_nextButton.onClick.AddListener(SwitchToBetScreen);
-
-		m_allToggles.AddRange(foundToggles);
+	public void PlayButtonSound()
+	{
+		m_buttonClickSource.Play();
 	}
 
 	public void SwitchToBetScreen()
@@ -77,28 +80,14 @@ public class UI : MonoBehaviour
 
 		m_potionScreen.SetActive(false);
 		m_betScreen.SetActive(true);
-
-		GameManager.GetInstance().PotionCreated();
-
-		m_nextButton.onClick.RemoveListener(SwitchToBetScreen);
-		m_nextButton.onClick.AddListener(FinishBetScreen);
-		m_nextButton.GetComponentInChildren<TextMeshProUGUI>().text = "Next Hero";		
+		m_nextButton.gameObject.SetActive(true);
 	}
 
 	public void FinishBetScreen()
 	{
 		GameManager.GetInstance().SendHeroToDungeon();
 
-		foreach(Toggle t in m_allToggles)
-		{
-			t.isOn = false;
-		}
-
 		m_biddingPanel.Reset();
-
-		m_nextButton.onClick.RemoveListener(FinishBetScreen);
-		m_nextButton.onClick.AddListener(SwitchToBetScreen);
-		m_nextButton.GetComponentInChildren<TextMeshProUGUI>().text = "Next";
 		m_potionScreen.SetActive(true);
 		m_betScreen.SetActive(false);
 	}
@@ -169,58 +158,14 @@ public class UI : MonoBehaviour
 		m_heroPopup = null;
 	}
 
-	public void OnStrengthChanged(HealingStrength healingStrength)
-	{
-
-	}
-
-	void OnToggleChanged(bool bNewValue)
-	{
-		if (bNewValue)
-		{
-			// TODO change this. Toggles suck.
-			List<int> newCombinations = new List<int>();
-
-			int strength = 0;
-			int buffType = 0;
-			int color = 0;
-
-			for (int i = 0; i < 3; ++i)
-			{
-				if (m_allToggles[i].isOn)
-				{
-					strength = i + 1;
-				}
-			}
-
-			for (int i = 3; i < 6; ++i)
-			{
-				if (m_allToggles[i].isOn)
-				{
-					buffType = i - 2;
-				}
-			}
-
-			for (int i = 6; i < m_allToggles.Count; ++i)
-			{
-				if (m_allToggles[i].isOn)
-				{
-					color = i - 5;
-				}
-			}
-
-			GameManager.GetInstance().SetCreatedPotion((HealingStrength)strength, (BuffType)buffType, (PotionColor)color);
-		}
-	}
-
 	void OnDisplayHero(Hero hero)
 	{
 		m_currentlyDisplayedHero = hero;
-		m_customerUI.SetCustomer(hero);
+		m_customer.SetCustomer(hero);
 	}
 
 	void OnHideHero()
 	{
-		m_customerUI.SetCustomer(null);
+		m_customer.SetCustomer(null);
 	}
 }

@@ -1,19 +1,30 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class StartScreen : MonoBehaviour
 {
 	[SerializeField]
-	private Button m_startGame;
+	private GameObject m_creditsScreen;
 
-	private void Start()
+    public void StartGame()
 	{
-		m_startGame.onClick.AddListener(OnStartGameClicked);
+		SceneManager.LoadScene("main");
 	}
 
-	void OnStartGameClicked()
+	public void ShowCredits()
 	{
-		GameManager.GetInstance().StartGame();
-		gameObject.SetActive(false);
+		m_creditsScreen.SetActive(true);
+	}
+
+	public void HideCredits()
+	{
+		m_creditsScreen.SetActive(false);
+	}
+
+	public void QuitGame()
+	{
+		Application.Quit();
 	}
 }

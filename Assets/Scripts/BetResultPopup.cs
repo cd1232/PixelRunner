@@ -37,7 +37,20 @@ public class BetResultPopup : MonoBehaviour
 	[SerializeField]
 	private Button m_receiveButton;
 
+	[SerializeField]
+	private AudioClip m_good;
+
+	[SerializeField]
+	private AudioClip m_bad;
+
+
+	private AudioSource m_audioSource;
 	public Action OnReceiveButtonPressed;
+
+	private void Awake()
+	{
+
+	}
 
 	public void Start()
 	{
@@ -51,6 +64,8 @@ public class BetResultPopup : MonoBehaviour
 
 	public void ShowInfo(HeroInDungeon heroInDungeon)
 	{
+		m_audioSource = GetComponent<AudioSource>();
+
 		HeroStats heroStats = heroInDungeon.m_hero.m_heroStats;
 		Potion createdPotion = heroInDungeon.m_hero.m_createdPotion;
 
@@ -79,13 +94,16 @@ public class BetResultPopup : MonoBehaviour
 		{
 			m_placeOfDeath.text = "The hero didn't die!";
 			m_finalWords.text = "";
+			m_audioSource.clip = m_bad;
 		}
 		else
 		{
 			m_placeOfDeath.text = "Place of Death: Floor " + heroInDungeon.m_placeOfDeath;
 			m_finalWords.text = "Final Words: " + heroInDungeon.m_finalWords;
+			m_audioSource.clip = m_good;
 		}
 
 		gameObject.SetActive(true);
+		m_audioSource.Play();
 	}
 }
