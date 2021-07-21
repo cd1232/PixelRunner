@@ -60,10 +60,20 @@ public class BetResultPopup : MonoBehaviour
 		m_potionStrength.text = "Healing Strength: " + createdPotion.m_healingStrength;
 		m_potionBuff.text = "Buff Type: " + createdPotion.m_buffType;
 
-		m_floorBet.text = "You bet they would die on: Floor " + heroInDungeon.m_hero.m_selectedFloor;
-		m_betAmount.text = "Bid Amount: $" + heroInDungeon.m_bidAmount;
+		if (heroInDungeon.m_hero.m_selectedFloor > 0)
+		{
+			m_floorBet.text = "You bet they would die on: Floor " + heroInDungeon.m_hero.m_selectedFloor;
+			m_betAmount.text = "Bid Amount: $" + heroInDungeon.m_bidAmount;
+			m_amountWon.text = "Reward: $" + heroInDungeon.m_MoneyWon.ToString("F2") + " ($" + heroInDungeon.m_bidAmount + "x" + heroInDungeon.m_rewardMultiplier.ToString("F2") + ")";
+		}
+		else
+		{
+			m_floorBet.text = "You didn't bet on this hero";
+			m_betAmount.text = "Bid Amount: $" + heroInDungeon.m_bidAmount;
+			m_amountWon.text = "Reward: $0.00";
+		}
 
-		m_amountWon.text = "Reward: $" + heroInDungeon.m_MoneyWon + " ($" + heroInDungeon.m_bidAmount + "x" + heroInDungeon.m_rewardMultiplier.ToString("F2") + ")";
+	
 
 		if (heroInDungeon.m_hasDungeonBeenBeaten)
 		{

@@ -140,7 +140,10 @@ public class UI : MonoBehaviour
 
 		foreach (DungeonEntry dungeonEntry in m_dungeonEntries)
 		{
-			Destroy(dungeonEntry.gameObject);
+			if (dungeonEntry != null)
+			{
+				Destroy(dungeonEntry.gameObject);
+			}
 		}
 
 		m_dungeonEntries.Clear();
@@ -155,7 +158,10 @@ public class UI : MonoBehaviour
 
 	void ReceivePayment()
 	{
-		GameManager.GetInstance().AddPaymentForHero(m_heroPopup);
+		if (m_heroPopup.m_hero.m_selectedFloor > 0)
+		{
+			GameManager.GetInstance().AddPaymentForHero(m_heroPopup);
+		}
 		m_popUp.gameObject.SetActive(false);
 		m_popUp.OnReceiveButtonPressed -= ReceivePayment;
 		m_heroPopup = null;

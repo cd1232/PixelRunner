@@ -189,7 +189,7 @@ public class GameManager : MonoBehaviour
 			m_highestEarnings = m_currentMoney;
 		}
 
-		if (m_currentMoney <= 0.0f || m_currentMoney >= m_highestEarnings)
+		if (m_currentMoney <= 0.0f || m_currentMoney >= m_winningAmount)
 		{
 			OnGameEnded?.Invoke();
 			m_hasGameEnded = true;
@@ -214,11 +214,12 @@ public class GameManager : MonoBehaviour
 
 		// Probably display both of these separately
 		int moneyGained = Potion.GetNumMatchingIngredidents(m_currentHero.m_createdPotion, m_currentHero.m_wantedPotion) * m_rightIngredientPayment;
-		AddMoney(moneyGained);
 
 
 		// Subtract bid amount from money
-		AddMoney(-m_bidAmount);
+		AddMoney(moneyGained + -m_bidAmount);
+
+
 		OnMoneyChanged?.Invoke(m_currentMoney);
 
 		m_currentHero = null;
