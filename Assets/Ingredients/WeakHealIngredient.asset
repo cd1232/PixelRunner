@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: WeakHealIngredient
   m_EditorClassIdentifier: 
   m_name: Weak
+  m_image: {fileID: 21300000, guid: 245efb31ab015124ba03e31629295788, type: 3}
   m_healingStrength: 1

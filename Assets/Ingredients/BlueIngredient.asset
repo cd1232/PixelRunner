@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: BlueIngredient
   m_EditorClassIdentifier: 
   m_name: Blue
+  m_image: {fileID: 21300000, guid: bec8cbd5f6e5bdf4980125df40a98b28, type: 3}
   m_potionColor: 3

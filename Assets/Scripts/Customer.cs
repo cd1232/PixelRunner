@@ -17,6 +17,24 @@ public class Customer : MonoBehaviour, IDropHandler
 	private TextMeshProUGUI m_items;
 
 	[SerializeField]
+	private Image m_weaponImage;
+
+	[SerializeField]
+	private Image m_armorImage;
+
+	[SerializeField]
+	private Slider m_healthBar;
+
+	[SerializeField]
+	private Sprite m_swordSprite;
+
+	[SerializeField]
+	private Sprite m_daggerSprite;
+
+	[SerializeField]
+	private Sprite m_unarmedSprite;
+
+	[SerializeField]
 	private PotionTextSettings m_potionTextSettings;
 
 	private Potion m_wantedPotion;
@@ -117,6 +135,29 @@ public class Customer : MonoBehaviour, IDropHandler
 			m_customerComments.text = textToDisplay;
 			m_hp.text = "HP: " + stats.m_currentHP + "/" + stats.m_maxHP;
 			m_items.text = "Items: " + stats.m_weaponType + " + " + stats.m_armorType;
+
+			switch (stats.m_weaponType)
+			{
+				case WeaponType.EmptyHand:
+					m_weaponImage.sprite = m_unarmedSprite;
+					break;
+				case WeaponType.Dagger:
+					m_weaponImage.sprite = m_daggerSprite;
+					break;
+				case WeaponType.Sword:
+					m_weaponImage.sprite = m_swordSprite;
+					break;
+				default:
+					break;
+			}
+
+			TextMeshProUGUI healthBarText = m_healthBar.GetComponentInChildren<TextMeshProUGUI>();
+			if (healthBarText)
+			{
+				healthBarText.text = stats.m_currentHP + "/" + stats.m_maxHP;					
+			}
+
+			m_healthBar.value = (float)stats.m_currentHP / (float)stats.m_maxHP;
 		}
 		else
 		{
