@@ -23,6 +23,18 @@ public class CustomerUI : MonoBehaviour
 
 	private Potion m_wantedPotion;
 
+	public void Start()
+	{
+		GameManager.GetInstance().OnGameEnded += OnGameEnded;
+	}
+
+	void OnGameEnded()
+	{
+		m_customerComments.text = "";
+		m_hp.text = "HP :";
+		m_items.text = "Items :";
+	}
+
 	public void SetCustomer(Hero hero)
 	{
 		if (hero != null)
@@ -39,7 +51,7 @@ public class CustomerUI : MonoBehaviour
 			string buffText = buffTextSetting != null ? buffTextSetting.text : "no buff";
 			string potionColorText = potionColorTextSetting != null ? potionColorTextSetting.text : "no color";
 
-			string textToDisplay = startText + healingStrengthText + " and gives me " + buffText + ". Can you make it " + potionColorText + "?";
+			string textToDisplay = startText + healingStrengthText + " and " + buffText + ". Can you make it " + potionColorText + "?";
 
 			m_customerComments.text = textToDisplay;
 			m_hp.text = "HP: " + stats.m_currentHP + "/" + stats.m_maxHP;

@@ -40,6 +40,12 @@ public class GameManager : MonoBehaviour
 	private int m_rightIngredientPayment = 5;
 
 	[SerializeField]
+	private float m_startingMoney = 50.0f;
+
+	[SerializeField]
+	private float m_winningAmount = 200.0f;
+
+	[SerializeField]
 	private FinalStatSettings finalStatSettings;
 
 	[Space]
@@ -49,6 +55,7 @@ public class GameManager : MonoBehaviour
 	public Action<KeyValuePair<HeroInDungeon, float>> OnAddHeroToDungeon;
 	public Action<HeroInDungeon> OnHeroFinishedDungeon;
 	public Action<float> OnMoneyChanged;
+	public Action OnGameEnded;
 
 	private List<Hero> m_heroes = new List<Hero>();
 	private List<KeyValuePair<HeroInDungeon, float>> m_dungeonHeroes = new List<KeyValuePair<HeroInDungeon, float>>();
@@ -56,10 +63,15 @@ public class GameManager : MonoBehaviour
 	[SerializeField]
 	private Hero m_currentHero;
 
-	private float m_currentMoney = 50.0f;
+	private float m_currentMoney;
+	private float m_highestEarnings;
 	private Potion m_chosenPotion;
 
-	private int m_bidAmount = -1;
+	private int m_bidAmount = 0;
+
+	private float m_timeElapsed = 0.0f;
+	private bool m_hasGameStarted = false;
+	private bool m_hasGameEnded = false;
 
 	void Awake()
 	{
@@ -69,15 +81,30 @@ public class GameManager : MonoBehaviour
 			Destroy(gameObject);
 	}
 
-	private void Start()
+	public void PlayAgain()
+	{		
+		StartGame();
+	}
+
+	public void StartGame()
 	{
+		m_hasGameEnded = false;
+		m_dungeonHeroes.Clear();
+		m_heroes.Clear();
+		m_currentHero = null;
+		m_bidAmount = 0;
+		m_timeElapsed = 0.0f;
+		m_currentMoney = m_startingMoney;
+		m_highestEarnings = m_startingMoney;
+		OnMoneyChanged?.Invoke(m_currentMoney);
+		m_hasGameStarted = true;
 		m_chosenPotion = new Potion(true);
 		DisplayHero();
 	}
 
 	void DisplayHero()
 	{
-		m_bidAmount = -1;
+		m_bidAmount = 0;
 		m_chosenPotion.Reset();
 
 		Hero newHero = GenerateNewHero();
@@ -133,9 +160,40 @@ public class GameManager : MonoBehaviour
 		return m_currentMoney;
 	}
 
+	public float GetTimeElapsed()
+	{
+		return m_timeElapsed;
+	}
+
 	public Potion GetMadePotion()
 	{
 		return m_chosenPotion;
+	}
+
+	public float GetHighestEarnings()
+	{
+		return m_highestEarnings;
+	}
+
+	public float GetWinningAmount()
+	{
+		return m_winningAmount;
+	}
+
+	public void AddMoney(float addedAmount)
+	{
+		m_currentMoney += addedAmount;
+
+		if (m_currentMoney > m_highestEarnings)
+		{
+			m_highestEarnings = m_currentMoney;
+		}
+
+		if (m_currentMoney <= 0.0f || m_currentMoney >= m_highestEarnings)
+		{
+			OnGameEnded?.Invoke();
+			m_hasGameEnded = true;
+		}
 	}
 
 	public void SetCreatedPotion(HealingStrength strength, BuffType buffType, PotionColor potionColor)
@@ -156,11 +214,11 @@ public class GameManager : MonoBehaviour
 
 		// Probably display both of these separately
 		int moneyGained = Potion.GetNumMatchingIngredidents(m_currentHero.m_createdPotion, m_currentHero.m_wantedPotion) * m_rightIngredientPayment;
-		m_currentMoney += moneyGained;
+		AddMoney(moneyGained);
 
-		
+
 		// Subtract bid amount from money
-		m_currentMoney -= m_bidAmount;
+		AddMoney(-m_bidAmount);
 		OnMoneyChanged?.Invoke(m_currentMoney);
 
 		m_currentHero = null;
@@ -313,7 +371,7 @@ public class GameManager : MonoBehaviour
 	{
 		KeyValuePair<HeroInDungeon, float> dungeonHero = m_dungeonHeroes.Find(hero => hero.Key == heroInDungeon);
 
-		m_currentMoney += heroInDungeon.m_MoneyWon;
+		AddMoney(heroInDungeon.m_MoneyWon);
 		OnMoneyChanged?.Invoke(m_currentMoney);
 
 		dungeonHero.Key.m_shouldDelete = true;
@@ -321,27 +379,35 @@ public class GameManager : MonoBehaviour
 
 	private void Update()
 	{
-		for (int i = 0; i < m_dungeonHeroes.Count; ++i)
+		if (m_hasGameStarted)
 		{
-			if (m_dungeonHeroes[i].Value > 0.0f)
+			if (!m_hasGameEnded)
 			{
-				m_dungeonHeroes[i] = new KeyValuePair<HeroInDungeon, float>(m_dungeonHeroes[i].Key, m_dungeonHeroes[i].Value - Time.deltaTime);
+				m_timeElapsed += Time.deltaTime;	
 
-			}
-
-			if (m_dungeonHeroes[i].Value <= 0.0f)
-			{
-				if (!m_dungeonHeroes[i].Key.m_haveResultsBeenCalculated)
+				for (int i = 0; i < m_dungeonHeroes.Count; ++i)
 				{
-					CalculateHeroResults(m_dungeonHeroes[i].Key);
-					OnHeroFinishedDungeon?.Invoke(m_dungeonHeroes[i].Key);
+					if (m_dungeonHeroes[i].Value > 0.0f)
+					{
+						m_dungeonHeroes[i] = new KeyValuePair<HeroInDungeon, float>(m_dungeonHeroes[i].Key, m_dungeonHeroes[i].Value - Time.deltaTime);
+
+					}
+
+					if (m_dungeonHeroes[i].Value <= 0.0f)
+					{
+						if (!m_dungeonHeroes[i].Key.m_haveResultsBeenCalculated)
+						{
+							CalculateHeroResults(m_dungeonHeroes[i].Key);
+							OnHeroFinishedDungeon?.Invoke(m_dungeonHeroes[i].Key);
+						}
+					}
+				}
+
+				if (m_dungeonHeroes.Count > 0)
+				{
+					m_dungeonHeroes.RemoveAll(hero => hero.Key.m_shouldDelete == true);
 				}
 			}
-		}
-
-		if (m_dungeonHeroes.Count > 0)
-		{
-			m_dungeonHeroes.RemoveAll(hero => hero.Key.m_shouldDelete == true);
 		}
 	}	
 

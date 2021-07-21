@@ -15,20 +15,22 @@ MonoBehaviour:
   m_startText: 'I want a Potion that '
   m_healPowerText:
   - healPower: 1
-    text: Heals me a little
+    text: heals me a little
   - healPower: 2
-    text: Provides moderate healing
+    text: provides moderate healing
   - healPower: 3
-    text: Fully heals me
+    text: fully heals me
+  - healPower: 0
+    text: doesn't heal me
   m_buffText:
   - buffType: 1
-    text: Speed
+    text: gives me speed
   - buffType: 2
-    text: Damage
+    text: gives me damage
   - buffType: 3
-    text: Invincibility
+    text: makes me invincible
   - buffType: 0
-    text: no buff
+    text: nothing else
   m_potionColorText:
   - color: 0
     text: Transparent

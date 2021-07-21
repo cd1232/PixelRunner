@@ -82,6 +82,9 @@ MonoBehaviour:
   - modifier: 1
     finalWord: -1
     buffType: 2
+  - modifier: 0
+    finalWord: -1
+    buffType: 0
   m_itemAndBuffModifiers:
   - modifier: 2
     finalWord: 4

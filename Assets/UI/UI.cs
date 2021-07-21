@@ -25,10 +25,16 @@ public class UI : MonoBehaviour
 	private GameObject m_betScreen;
 
 	[SerializeField]
+	private BiddingPanel m_biddingPanel;
+
+	[SerializeField]
 	private BetResultPopup m_popUp;
 
 	[SerializeField]
 	private Button m_nextButton;
+
+	[SerializeField]
+	private EndScreen m_endScreen;
 
 	[SerializeField]
 	private SoldPotionStatusUI m_soldPotionStatus;
@@ -50,6 +56,7 @@ public class UI : MonoBehaviour
 		gameManager.OnAddHeroToDungeon += OnAddHeroToDungeon;
 		gameManager.OnHeroFinishedDungeon += OnHeroFinishedInDungeon;
 		gameManager.OnMoneyChanged += OnMoneyChanged;
+		gameManager.OnGameEnded += OnGameEnded;
 
 		m_currentMoney.text = "$" + gameManager.GetCurrentMoney().ToString("F2");
 
@@ -84,6 +91,8 @@ public class UI : MonoBehaviour
 		{
 			t.isOn = false;
 		}
+
+		m_biddingPanel.Reset();
 
 		m_nextButton.onClick.RemoveListener(FinishBetScreen);
 		m_nextButton.onClick.AddListener(SwitchToBetScreen);
@@ -125,12 +134,36 @@ public class UI : MonoBehaviour
 		m_currentMoney.text = "$" + newAmount.ToString("F2");
 	}
 
+	void OnGameEnded()
+	{
+		float money = GameManager.GetInstance().GetCurrentMoney();
+
+		foreach (DungeonEntry dungeonEntry in m_dungeonEntries)
+		{
+			Destroy(dungeonEntry.gameObject);
+		}
+
+		m_dungeonEntries.Clear();
+		m_currentlyDisplayedHero = null;
+		m_heroPopup = null;
+		m_soldPotionStatus.ResetPotionText();
+
+
+		m_endScreen.ShowEndScreen();
+		m_endScreen.gameObject.SetActive(true);
+	}
+
 	void ReceivePayment()
 	{
 		GameManager.GetInstance().AddPaymentForHero(m_heroPopup);
 		m_popUp.gameObject.SetActive(false);
 		m_popUp.OnReceiveButtonPressed -= ReceivePayment;
 		m_heroPopup = null;
+	}
+
+	public void OnStrengthChanged(HealingStrength healingStrength)
+	{
+
 	}
 
 	void OnToggleChanged(bool bNewValue)

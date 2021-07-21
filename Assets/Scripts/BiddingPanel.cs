@@ -60,4 +60,15 @@ public class BiddingPanel : MonoBehaviour
 		m_bidAmountText.text = "Current Bid Amount: $" + m_bidAmount;
 		GameManager.GetInstance().SetBidAmount(amount);
 	}
+
+	public void Reset()
+	{
+		m_selectedFloorText.text = "Selected Floor: None";
+		m_bidAmountText.text = "Current Bid Amount: None";
+
+		for (int i = 0; i < m_allToggles.Count; ++i)
+		{
+			m_allToggles[i].isOn = false;
+		}
+	}
 }
