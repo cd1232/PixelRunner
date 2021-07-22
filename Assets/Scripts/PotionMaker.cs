@@ -45,8 +45,6 @@ public class PotionMaker : MonoBehaviour, IDropHandler
 
 	private List<TextMeshProUGUI> m_texts = new List<TextMeshProUGUI>();
 
-	private bool[] m_ingredientsAdded = new bool[3];
-
 	void Awake()
 	{
 		m_audioSource = GetComponent<AudioSource>();
@@ -94,60 +92,52 @@ public class PotionMaker : MonoBehaviour, IDropHandler
 			else if (buffIngredient)
 			{
 				m_potionBeingCreated.m_buffType = buffIngredient.m_buffType;
-				//m_ingredientsAdded[0] = true;
 				m_texts[1].text = buffIngredient.m_name;
 
 				m_buffImage.gameObject.SetActive(true);
-				switch (m_potionBeingCreated.m_buffType)
-				{
-					case BuffType.Nothing:
-						m_buffImage.gameObject.SetActive(false);
-						break;
-					case BuffType.Speed:
-						m_buffImage.sprite = m_speedSprite;
-						break;
-					case BuffType.Damage:
-						m_buffImage.sprite = m_damageSprite;
-						break;
-					case BuffType.Invincible:
-						m_buffImage.sprite = m_invincibleSprite;
-						break;
-				}
+				m_buffImage.sprite = buffIngredient.m_potionImage;
+
+				// Would we ever put in a nothing ingredient??
+				//switch (m_potionBeingCreated.m_buffType)
+				//{
+				//	case BuffType.Nothing:
+				//		m_buffImage.gameObject.SetActive(false);
+				//		break;
+				//	case BuffType.Speed:
+				//		m_buffImage.sprite = m_speedSprite;
+				//		break;
+				//	case BuffType.Damage:
+				//		m_buffImage.sprite = m_damageSprite;
+				//		break;
+				//	case BuffType.HardenedSkin:
+				//		m_buffImage.sprite = m_invincibleSprite;
+				//		break;
+				//}
 
 			}
 			else if (colorIngredient)
 			{
 				m_potionBeingCreated.m_potionColor = colorIngredient.m_potionColor;
-				//m_ingredientsAdded[2] = true;
 				m_texts[2].text = colorIngredient.m_name;
 
-				switch (m_potionBeingCreated.m_potionColor)
-				{
-					case PotionColor.Transparent:
-						m_image.sprite = m_transparentSprite;
-						break;
-					case PotionColor.Red:
-						m_image.sprite = m_redSprite;
-						break;
-					case PotionColor.Green:
-						m_image.sprite = m_greenSprite;
-						break;
-					case PotionColor.Blue:
-						m_image.sprite = m_blueSprite;
-						break;
-				}
+				m_image.sprite = colorIngredient.m_potionImage;
+
+				//switch (m_potionBeingCreated.m_potionColor)
+				//{
+				//	case PotionColor.Transparent:
+				//		m_image.sprite = m_transparentSprite;
+				//		break;
+				//	case PotionColor.Red:
+				//		m_image.sprite = m_redSprite;
+				//		break;
+				//	case PotionColor.Green:
+				//		m_image.sprite = m_greenSprite;
+				//		break;
+				//	case PotionColor.Blue:
+				//		m_image.sprite = m_blueSprite;
+				//		break;
+				//}
 			}
-
-			//if (m_ingredientsAdded[0] && m_ingredientsAdded[1] && m_ingredientsAdded[2])
-			//{
-			//	m_madePotionsList.AddPotion(m_potionBeingCreated);
-			//	m_potionBeingCreated.Reset();
-
-			//	for (int i = 0; i < m_ingredientsAdded.Length; ++i)
-			//	{
-			//		m_ingredientsAdded[i] = false;
-			//	}
-			//}
 		}		
 	}
 }

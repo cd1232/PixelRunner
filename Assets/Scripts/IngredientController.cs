@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -12,24 +10,23 @@ public class IngredientController : MonoBehaviour, IPointerDownHandler, IBeginDr
 	private CanvasGroup m_canvasGroup;
 	private RectTransform m_rectTransform;
 	private Image m_ingredientImage;
-
-	private TextMeshProUGUI m_text;
-
-	private GridLayoutGroup gridLayoutGroup;
-
+	
 	private Ingredient m_ingredient;
+
+	private Transform m_parent;
+
+	private int m_indexInGrid = -1;
 
 	void Awake()
 	{
 		m_canvasGroup = GetComponent<CanvasGroup>();
 		m_rectTransform = GetComponent<RectTransform>();
 		m_ingredientImage = GetComponent<Image>();
-		m_text = GetComponentInChildren<TextMeshProUGUI>();
 	}
 
 	void Start()
 	{
-		gridLayoutGroup = GetComponentInParent<GridLayoutGroup>();
+		m_parent = transform.parent;
 	}
 
 	public Ingredient GetIngredient()
@@ -37,12 +34,11 @@ public class IngredientController : MonoBehaviour, IPointerDownHandler, IBeginDr
 		return m_ingredient;
 	}
 
-	public void SetupIngredient(Ingredient ingredient, Canvas canvas)
+	public void SetupIngredient(Ingredient ingredient, Canvas canvas, int indexInGrid)
 	{
+		m_indexInGrid = indexInGrid;
 		m_canvas = canvas;
 		m_ingredient = ingredient;
-		m_text.text = ingredient.m_name;
-
 		m_ingredientImage.sprite = ingredient.m_image;
 	}
 
@@ -50,6 +46,7 @@ public class IngredientController : MonoBehaviour, IPointerDownHandler, IBeginDr
 	{
 		m_canvasGroup.blocksRaycasts = false;
 		m_canvasGroup.alpha = 0.6f;
+
 		transform.SetParent(m_canvas.transform);
 	}
 
@@ -62,7 +59,8 @@ public class IngredientController : MonoBehaviour, IPointerDownHandler, IBeginDr
 	{
 		m_canvasGroup.blocksRaycasts = true;
 		m_canvasGroup.alpha = 1.0f;
-		transform.SetParent(gridLayoutGroup.transform);
+		transform.SetParent(m_parent);		
+		transform.SetSiblingIndex(m_indexInGrid);
 	}
 
 	public void OnPointerDown(PointerEventData eventData)

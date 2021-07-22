@@ -28,7 +28,6 @@ public class MadePotion : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
 	[SerializeField]
 	private Sprite m_blueSprite;
 
-
 	public Potion m_potion;
 
 	private Canvas m_canvas;
@@ -46,8 +45,6 @@ public class MadePotion : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
 
 	private MadePotionsList m_madePotionsParent;
 
-
-	// TODO duplicated from ingredient controller
 
 	void Awake()
 	{
@@ -93,7 +90,7 @@ public class MadePotion : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
 			case BuffType.Damage:
 				m_buffImage.sprite = m_damageSprite;
 				break;
-			case BuffType.Invincible:
+			case BuffType.HardenedSkin:
 				m_buffImage.sprite = m_invincibleSprite;
 				break;
 		}

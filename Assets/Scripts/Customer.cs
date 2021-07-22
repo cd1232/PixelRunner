@@ -11,12 +11,6 @@ public class Customer : MonoBehaviour, IDropHandler
 	private TextMeshProUGUI m_customerComments;
 
 	[SerializeField]
-	private TextMeshProUGUI m_hp;
-
-	[SerializeField]
-	private TextMeshProUGUI m_items;
-
-	[SerializeField]
 	private Image m_weaponImage;
 
 	[SerializeField]
@@ -58,8 +52,6 @@ public class Customer : MonoBehaviour, IDropHandler
 	void OnGameEnded()
 	{
 		m_customerComments.text = "";
-		m_hp.text = "HP :";
-		m_items.text = "Items :";
 	}
 
 	public void OnDrop(PointerEventData eventData)
@@ -142,8 +134,6 @@ public class Customer : MonoBehaviour, IDropHandler
 			string textToDisplay = startText + healingStrengthText + " and " + buffText + ". Can you make it " + potionColorText + "?";
 			m_originalCustomerComments = textToDisplay;
 			m_customerComments.text = textToDisplay;
-			m_hp.text = "HP: " + stats.m_currentHP + "/" + stats.m_maxHP;
-			m_items.text = "Items: " + stats.m_weaponType + " + " + stats.m_armorType;
 
 			switch (stats.m_weaponType)
 			{
@@ -171,8 +161,6 @@ public class Customer : MonoBehaviour, IDropHandler
 		else
 		{
 			m_customerComments.text = "";
-			m_hp.text = "";
-			m_items.text = "";
 		}
 
 	}

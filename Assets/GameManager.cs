@@ -48,6 +48,9 @@ public class GameManager : MonoBehaviour
 	[SerializeField]
 	private FinalStatSettings finalStatSettings;
 
+	[SerializeField]
+	private TutorialPlayer m_tutorialPlayer;
+
 	[Space]
 
 	public Action<Hero> OnDisplayHero;
@@ -74,6 +77,8 @@ public class GameManager : MonoBehaviour
 	private bool m_hasGameStarted = false;
 	private bool m_hasGameEnded = false;
 
+	private bool m_shouldPlayTutorial = true;
+
 	void Awake()
 	{
 		if (Instance == null)
@@ -89,6 +94,18 @@ public class GameManager : MonoBehaviour
 
 	public void StartGame()
 	{
+		//if (m_shouldPlayTutorial)
+		//{
+		//	m_tutorialPlayer.Play();
+		//}
+		//else
+		//{
+		//	m_tutorialPlayer.RemoveTutorialEntries();
+		//}
+
+		// if tutorial is on
+		// delay start of game and first go through the tutorial
+
 		m_hasGameEnded = false;
 		m_dungeonHeroes.Clear();
 		m_heroes.Clear();
@@ -112,6 +129,11 @@ public class GameManager : MonoBehaviour
 		m_heroes.Add(newHero);
 		m_currentHero = newHero;
 		OnDisplayHero?.Invoke(newHero);
+	}
+
+	public void OnTutorialChanged(bool newValue)
+	{
+		m_shouldPlayTutorial = newValue;
 	}
 
 	Hero GenerateNewHero()

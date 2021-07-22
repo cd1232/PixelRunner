@@ -110,6 +110,12 @@ MonoBehaviour:
     weaponType: 0
     armorType: 2
     itemModifierState: 1
+  - modifier: 2
+    finalWord: -1
+    buffType: 3
+    weaponType: 0
+    armorType: 0
+    itemModifierState: 2
   m_betRewards:
   - difference: 0
     multiplier: 2

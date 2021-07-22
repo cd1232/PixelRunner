@@ -27,7 +27,7 @@ public enum BuffType
 	Nothing,
 	Speed,
 	Damage,
-	Invincible
+	HardenedSkin
 };
 
 public class Potion
@@ -70,6 +70,12 @@ public class Potion
 		m_potionColor = PotionColor.Transparent;
 		m_buffType = BuffType.Nothing;
 	}
+
+
+	// TODO use ingredients instead
+	public HealingIngredient healingIngredient;
+	public BuffIngredient buffIngredient;
+	public ColorIngredient colorIngredient;
 
 	public HealingStrength m_healingStrength;
 	public PotionColor m_potionColor;

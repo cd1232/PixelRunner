@@ -3,15 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public enum IngredientEffect
-{
-	Health,
-	Buff,
-	Color
-}
-
+[SerializeField]
 public class Ingredient : ScriptableObject
 {
 	public string m_name = "";
 	public Sprite m_image;
+	public Sprite m_potionImage;
 }

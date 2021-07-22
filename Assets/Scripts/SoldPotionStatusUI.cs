@@ -16,15 +16,15 @@ public class SoldPotionStatusUI : MonoBehaviour
 
 	public void SetSoldPotionText(Potion potion)
 	{
-		m_healingStrength.text = "Healing Strength: " + potion.m_healingStrength;
-		m_buffType.text = "Buff Type: " + potion.m_buffType;
-		m_color.text = "Color: " + potion.m_potionColor;
+		m_healingStrength.text = potion.m_healingStrength.ToString();
+		m_buffType.text = potion.m_buffType.ToString();
+		m_color.text = potion.m_potionColor.ToString();
 	}
 
 	public void ResetPotionText()
 	{
-		m_healingStrength.text = "Healing Strength: None";
-		m_buffType.text = "Buff Type: None";
-		m_color.text = "Color: Transparent";
+		m_healingStrength.text = "";
+		m_buffType.text = "";
+		m_color.text = "";
 	}
 }
