@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,68 +5,82 @@ using UnityEngine.UI;
 public class BiddingPanel : MonoBehaviour
 {
 	[SerializeField]
-	private TextMeshProUGUI m_bidAmountText;
+	private Slider m_floorSlider;
 
 	[SerializeField]
-	private TextMeshProUGUI m_selectedFloorText;
+	private Button m_bid10Button;
 
 	[SerializeField]
-	private GameObject m_buttonsContainer;
+	private Button m_bid20Button;
 
-	private List<Toggle> m_allToggles = new List<Toggle>();
+	[SerializeField]
+	private Button m_bid30Button;
 
-	private int m_selectedFloor = -1;
+	[SerializeField]
+	private Sprite m_bid10Up;
+
+	[SerializeField]
+	private Sprite m_bid20Up;
+
+	[SerializeField]
+	private Sprite m_bid30Up;
+
+	[SerializeField]
+	private Sprite m_bid10Down;
+
+	[SerializeField]
+	private Sprite m_bid20Down;
+
+	[SerializeField]
+	private Sprite m_bid30Down;
+
+	private int m_selectedFloor = 0;
 	private int m_bidAmount = -1;
 
-	private void Start()
+	private void Awake()
 	{
-		Toggle[] foundToggles = m_buttonsContainer.GetComponentsInChildren<Toggle>();
-		foreach (Toggle t in foundToggles)
-		{
-			t.onValueChanged.AddListener(OnToggleChanged);
-		}
-
-		m_allToggles.AddRange(foundToggles);
+		m_bid10Button.GetComponent<Image>().sprite = m_bid10Down;
+		m_bid20Button.GetComponent<Image>().sprite = m_bid20Down;
+		m_bid30Button.GetComponent<Image>().sprite = m_bid30Down;
 	}
-	
-	void OnToggleChanged(bool bNewValue)
+
+	public void OnFloorChanged(float value)
 	{
-		if (bNewValue)
-		{
-			for (int i = 0; i < m_allToggles.Count; ++i)
-			{
-				if (m_allToggles[i].isOn)
-				{
-					m_selectedFloor = i + 1;
-					m_selectedFloorText.text = "Selected Floor: " + m_selectedFloor;
-					GameManager.GetInstance().SetFloorDeathGuess(m_selectedFloor);
-					break;
-				}
-			}
-		}
-		else
-		{
-			m_selectedFloorText.text = "Selected Floor: None";
-			m_selectedFloor = -1;
-			GameManager.GetInstance().SetFloorDeathGuess(m_selectedFloor);
-		}
+		Debug.Log("Setting floor to: " + value.ToString("F0"));
+		m_selectedFloor = (int)value;
+
+		GameManager.GetInstance().SetFloorDeathGuess(m_selectedFloor);
 	}
 
 	public void OnBidAmount(int amount)
 	{
 		m_bidAmount = amount;
-		m_bidAmountText.text = "Current Bid Amount: $" + m_bidAmount;
+
+		m_bid10Button.GetComponent<Image>().sprite = m_bid10Down;
+		m_bid20Button.GetComponent<Image>().sprite = m_bid20Down;
+		m_bid30Button.GetComponent<Image>().sprite = m_bid30Down;
+		if (amount == 10)
+		{
+			m_bid10Button.GetComponent<Image>().sprite = m_bid10Up;
+																
+		}														
+		else if (amount == 20)									
+		{														
+			m_bid20Button.GetComponent<Image>().sprite = m_bid20Up;
+																
+		}														
+		else if (amount == 30)									
+		{														
+			m_bid30Button.GetComponent<Image>().sprite = m_bid30Up;
+
+		}
+
 		GameManager.GetInstance().SetBidAmount(amount);
 	}
 
 	public void Reset()
 	{
-		m_selectedFloorText.text = "Selected Floor: None";
-		m_bidAmountText.text = "Current Bid Amount: None";
-
-		for (int i = 0; i < m_allToggles.Count; ++i)
-		{
-			m_allToggles[i].isOn = false;
-		}
+		m_selectedFloor = 0;
+		m_floorSlider.value = 0;
 	}
 }

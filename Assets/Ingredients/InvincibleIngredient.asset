@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: InvincibleIngredient
   m_EditorClassIdentifier: 
   m_name: Invincible
-  m_image: {fileID: 21300000, guid: 77eb21b47f5f3f24296f40eff90b08e6, type: 3}
+  m_image: {fileID: 21300000, guid: 54fd3b445be814e4caf71d18d53cbdd0, type: 3}
   m_buffType: 3

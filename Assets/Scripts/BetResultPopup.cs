@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -46,11 +44,6 @@ public class BetResultPopup : MonoBehaviour
 
 	private AudioSource m_audioSource;
 	public Action OnReceiveButtonPressed;
-
-	private void Awake()
-	{
-
-	}
 
 	public void Start()
 	{

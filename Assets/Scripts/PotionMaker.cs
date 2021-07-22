@@ -7,9 +7,11 @@ using UnityEngine.UI;
 
 public class PotionMaker : MonoBehaviour, IDropHandler
 {
-	private Potion m_potionBeingCreated;
-
+	[SerializeField]
 	private Image m_image;
+
+	[SerializeField]
+	private Image m_buffImage;
 
 	[SerializeField]
 	private MadePotionsList m_madePotionsList;
@@ -17,7 +19,29 @@ public class PotionMaker : MonoBehaviour, IDropHandler
 	//[SerializeField]
 	//private AudioClip m_ingredientAdded;
 
+	[SerializeField]
+	private Sprite m_damageSprite;
+
+	[SerializeField]
+	private Sprite m_speedSprite;
+
+	[SerializeField]
+	private Sprite m_invincibleSprite;
+
+	[SerializeField]
+	private Sprite m_transparentSprite;
+
+	[SerializeField]
+	private Sprite m_redSprite;
+
+	[SerializeField]
+	private Sprite m_greenSprite;
+
+	[SerializeField]
+	private Sprite m_blueSprite;
+
 	private AudioSource m_audioSource;
+	private Potion m_potionBeingCreated;
 
 	private List<TextMeshProUGUI> m_texts = new List<TextMeshProUGUI>();
 
@@ -25,7 +49,6 @@ public class PotionMaker : MonoBehaviour, IDropHandler
 
 	void Awake()
 	{
-		m_image = GetComponent<Image>();
 		m_audioSource = GetComponent<AudioSource>();
 		m_texts.AddRange(GetComponentsInChildren<TextMeshProUGUI>());
 	}
@@ -33,6 +56,7 @@ public class PotionMaker : MonoBehaviour, IDropHandler
 	public void Start()
 	{
 		m_potionBeingCreated = new Potion(true);
+		m_buffImage.gameObject.SetActive(false);
 	}
 
 	public void MakePotion()
@@ -43,6 +67,8 @@ public class PotionMaker : MonoBehaviour, IDropHandler
 			m_texts[0].text = "None";
 			m_texts[1].text = "Nothing";
 			m_texts[2].text = "Transparent";
+			m_buffImage.gameObject.SetActive(false);
+			m_image.sprite = m_transparentSprite;
 		}
 	}
 
@@ -63,6 +89,7 @@ public class PotionMaker : MonoBehaviour, IDropHandler
 			{
 				m_potionBeingCreated.m_healingStrength = healingIngredient.m_healingStrength;
 				m_texts[0].text = healingIngredient.m_name;
+
 			}
 			else if (buffIngredient)
 			{
@@ -70,12 +97,45 @@ public class PotionMaker : MonoBehaviour, IDropHandler
 				//m_ingredientsAdded[0] = true;
 				m_texts[1].text = buffIngredient.m_name;
 
+				m_buffImage.gameObject.SetActive(true);
+				switch (m_potionBeingCreated.m_buffType)
+				{
+					case BuffType.Nothing:
+						m_buffImage.gameObject.SetActive(false);
+						break;
+					case BuffType.Speed:
+						m_buffImage.sprite = m_speedSprite;
+						break;
+					case BuffType.Damage:
+						m_buffImage.sprite = m_damageSprite;
+						break;
+					case BuffType.Invincible:
+						m_buffImage.sprite = m_invincibleSprite;
+						break;
+				}
+
 			}
 			else if (colorIngredient)
 			{
 				m_potionBeingCreated.m_potionColor = colorIngredient.m_potionColor;
 				//m_ingredientsAdded[2] = true;
 				m_texts[2].text = colorIngredient.m_name;
+
+				switch (m_potionBeingCreated.m_potionColor)
+				{
+					case PotionColor.Transparent:
+						m_image.sprite = m_transparentSprite;
+						break;
+					case PotionColor.Red:
+						m_image.sprite = m_redSprite;
+						break;
+					case PotionColor.Green:
+						m_image.sprite = m_greenSprite;
+						break;
+					case PotionColor.Blue:
+						m_image.sprite = m_blueSprite;
+						break;
+				}
 			}
 
 			//if (m_ingredientsAdded[0] && m_ingredientsAdded[1] && m_ingredientsAdded[2])

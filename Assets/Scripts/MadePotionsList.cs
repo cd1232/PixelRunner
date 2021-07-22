@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,7 +16,6 @@ public class MadePotionsList : MonoBehaviour
 	private HorizontalLayoutGroup m_horizontalLayoutGroup;
 
 	private List<MadePotion> m_madePotions = new List<MadePotion>();
-
 
 	private void Awake()
 	{

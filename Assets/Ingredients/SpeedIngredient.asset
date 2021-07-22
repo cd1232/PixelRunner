@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: SpeedIngredient
   m_EditorClassIdentifier: 
   m_name: Speedy
-  m_image: {fileID: 21300000, guid: b9f6fab8418daca41a4332bd8b5a6fd1, type: 3}
+  m_image: {fileID: 21300000, guid: 1ce8d15dcd59404459aae6993dab10e7, type: 3}
   m_buffType: 1

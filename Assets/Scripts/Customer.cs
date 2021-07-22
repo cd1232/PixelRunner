@@ -82,6 +82,15 @@ public class Customer : MonoBehaviour, IDropHandler
 		{
 			Potion potion = givenPotion.m_potion;
 
+			if (m_wantedPotion == null)
+			{
+				Debug.Log("Wanted potion is null");
+			}
+			else if (potion == null)
+			{
+				Debug.Log("given potion is null");
+			}
+
 			int matchingIngredients = Potion.GetNumMatchingIngredidents(potion, m_wantedPotion);
 			if (matchingIngredients == 3)
 			{

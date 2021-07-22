@@ -1,15 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
-[Serializable]
-public enum HPLevel
-{
-	Low,
-	Mid,
-	High
-}
 
 [Serializable]
 public enum WeaponType
@@ -46,5 +36,5 @@ public class Hero
 	public Potion m_wantedPotion;
 	[SerializeField]
 	public Potion m_createdPotion;
-	public int m_selectedFloor = -1;
+	public int m_selectedFloor = 0;
 }

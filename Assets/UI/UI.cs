@@ -66,7 +66,6 @@ public class UI : MonoBehaviour
 
 		m_currentMoney.text = "$" + gameManager.GetCurrentMoney().ToString("F2");
 		m_nextButton.onClick.AddListener(FinishBetScreen);
-		m_nextButton.GetComponentInChildren<TextMeshProUGUI>().text = "Next Hero";		
 	}
 
 	public void PlayButtonSound()
