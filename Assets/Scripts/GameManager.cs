@@ -63,7 +63,7 @@ public class GameManager : MonoBehaviour
 	public Action OnHideHero;
 	public Action<KeyValuePair<HeroInDungeon, float>> OnAddHeroToDungeon;
 	public Action<HeroInDungeon> OnHeroFinishedDungeon;
-	public Action<float> OnMoneyChanged;
+	public Action<float, float> OnMoneyChanged;
 	public Action OnMoneyAdded;
 	public Action OnGameEnded;
 	public Action OnPotionGiven;
@@ -120,7 +120,7 @@ public class GameManager : MonoBehaviour
 		m_timeElapsed = 0.0f;
 		m_currentMoney = m_startingMoney;
 		m_highestEarnings = m_startingMoney;
-		OnMoneyChanged?.Invoke(m_currentMoney);
+		OnMoneyChanged?.Invoke(m_currentMoney, m_currentMoney);
 		m_hasGameStarted = true;
 		m_chosenPotion = new Potion(true);
 		DisplayHero();
@@ -228,7 +228,7 @@ public class GameManager : MonoBehaviour
 		{
 			OnMoneyAdded?.Invoke();
 		}
-		OnMoneyChanged?.Invoke(m_currentMoney);
+		OnMoneyChanged?.Invoke(previousMoney, m_currentMoney);
 
 		if (m_currentMoney > m_highestEarnings)
 		{
@@ -252,9 +252,7 @@ public class GameManager : MonoBehaviour
 		// Probably display both of these separately
 		int moneyGained = Potion.GetNumMatchingIngredidents(m_currentHero.m_createdPotion, m_currentHero.m_wantedPotion) * m_rightIngredientPayment;
 
-
 		AddMoney(moneyGained);
-		OnMoneyChanged?.Invoke(m_currentMoney);
 
 		OnPotionGiven?.Invoke();
 	}
@@ -267,10 +265,11 @@ public class GameManager : MonoBehaviour
 		OnAddHeroToDungeon?.Invoke(new KeyValuePair<HeroInDungeon, float>(heroInDungeon, m_dungeonCountdown));
 		heroInDungeon.m_bidAmount = m_bidAmount;
 
+		float previousMoney = m_currentMoney;
 		// Subtract bid amount from money
 		AddMoney(-m_bidAmount);
 
-		OnMoneyChanged?.Invoke(m_currentMoney);
+		OnMoneyChanged?.Invoke(previousMoney,m_currentMoney);
 
 		m_currentHero = null;
 		OnHideHero?.Invoke();
@@ -447,7 +446,6 @@ public class GameManager : MonoBehaviour
 		KeyValuePair<HeroInDungeon, float> dungeonHero = m_dungeonHeroes.Find(hero => hero.Key == heroInDungeon);
 
 		AddMoney(heroInDungeon.m_MoneyWon);
-		OnMoneyChanged?.Invoke(m_currentMoney);
 
 		dungeonHero.Key.m_shouldDelete = true;
 	}

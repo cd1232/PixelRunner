@@ -57,9 +57,9 @@ public class Potion
 	public static int GetNumMatchingIngredidents(Potion p1, Potion p2)
 	{
 		int numMatching = 0;
-		numMatching += p1.m_healingStrength == p2.m_healingStrength ? 1 : 0;
-		numMatching += p1.m_buffType == p2.m_buffType ? 1 : 0;
-		numMatching += p1.m_potionColor == p2.m_potionColor ? 1 : 0;
+		numMatching += p1.m_healingStrength == p2.m_healingStrength && p1.m_healingStrength != HealingStrength.None ? 1 : 0;
+		numMatching += p1.m_buffType == p2.m_buffType && p1.m_buffType != BuffType.Nothing ? 1 : 0;
+		numMatching += p1.m_potionColor == p2.m_potionColor && p1.m_potionColor != PotionColor.Transparent ? 1 : 0;
 
 		return numMatching;
 	}

@@ -10,9 +10,6 @@ public class UI : MonoBehaviour
 	private Customer m_customer;
 
 	[SerializeField]
-	private TextMeshProUGUI m_currentMoney;
-
-	[SerializeField]
 	private GameObject m_dungeonList;
 
 	[SerializeField]
@@ -60,11 +57,8 @@ public class UI : MonoBehaviour
 		gameManager.OnHideHero += OnHideHero;
 		gameManager.OnAddHeroToDungeon += OnAddHeroToDungeon;
 		gameManager.OnHeroFinishedDungeon += OnHeroFinishedInDungeon;
-		gameManager.OnMoneyChanged += OnMoneyChanged;
 		gameManager.OnGameEnded += OnGameEnded;
 		gameManager.OnPotionGiven += SwitchToBetScreen;
-
-		m_currentMoney.text = "$" + gameManager.GetCurrentMoney().ToString("F2");
 		m_nextButton.onClick.AddListener(FinishBetScreen);
 	}
 
@@ -117,11 +111,6 @@ public class UI : MonoBehaviour
 		m_popUp.OnReceiveButtonPressed += ReceivePayment;
 		m_popUp.ShowInfo(heroInDungeon);
 		m_heroPopup = heroInDungeon;
-	}
-
-	void OnMoneyChanged(float newAmount)
-	{
-		m_currentMoney.text = "$" + newAmount.ToString("F2");
 	}
 
 	void OnGameEnded()
