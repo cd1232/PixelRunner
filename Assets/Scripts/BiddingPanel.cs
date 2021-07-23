@@ -82,5 +82,8 @@ public class BiddingPanel : MonoBehaviour
 	{
 		m_selectedFloor = 0;
 		m_floorSlider.value = 0;
+		m_bid10Button.GetComponent<Image>().sprite = m_bid10Down;
+		m_bid20Button.GetComponent<Image>().sprite = m_bid20Down;
+		m_bid30Button.GetComponent<Image>().sprite = m_bid30Down;
 	}
 }

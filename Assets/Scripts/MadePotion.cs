@@ -47,13 +47,14 @@ public class MadePotion : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
 
 	private Transform m_potionContainer;
 
+	private Vector3 m_oldAnchoredPosition;
+
 
 	void Awake()
 	{
 		m_canvasGroup = GetComponent<CanvasGroup>();
 		m_rectTransform = GetComponent<RectTransform>();
 		m_potionImage = GetComponent<Image>();
-		m_buffImage = GetComponentInChildren<Image>();
 		m_destoryButton = GetComponentInChildren<Button>();
 		m_texts.AddRange(GetComponentsInChildren<TextMeshProUGUI>());
 	}
@@ -70,6 +71,8 @@ public class MadePotion : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
 
 	public void SetupMadePotion(Potion potion, Canvas canvas, MadePotionsList madePotionsParent)
 	{
+		m_oldAnchoredPosition = m_rectTransform.anchoredPosition;
+
 		m_potionContainer = GetComponentInParent<Transform>();
 		m_canvas = canvas;
 		m_potion = potion;
@@ -77,7 +80,6 @@ public class MadePotion : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
 
 		m_texts[0].text = m_potion.m_healingStrength.ToString();
 		m_texts[1].text = m_potion.m_buffType.ToString();
-		m_texts[2].text = m_potion.m_potionColor.ToString();
 
 
 		m_buffImage.gameObject.SetActive(true);
@@ -124,7 +126,7 @@ public class MadePotion : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
 	{
 		m_canvasGroup.blocksRaycasts = false;
 		m_canvasGroup.alpha = 0.6f;
-		transform.SetParent(m_canvas.transform);
+		//transform.SetParent(m_canvas.transform);
 	}
 
 	public void OnDrag(PointerEventData eventData)
@@ -136,7 +138,8 @@ public class MadePotion : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
 	{
 		m_canvasGroup.blocksRaycasts = true;
 		m_canvasGroup.alpha = 1.0f;
-		transform.SetParent(m_potionContainer);
+		//transform.SetParent(m_potionContainer);
+		m_rectTransform.anchoredPosition = m_oldAnchoredPosition;
 	}
 
 	public void OnPointerDown(PointerEventData eventData)

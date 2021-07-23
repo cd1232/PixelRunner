@@ -48,7 +48,6 @@ public class PotionMaker : MonoBehaviour, IDropHandler
 	void Awake()
 	{
 		m_audioSource = GetComponent<AudioSource>();
-		//m_texts.AddRange(GetComponentsInChildren<TextMeshProUGUI>());
 	}
 
 	public void Start()
@@ -62,9 +61,6 @@ public class PotionMaker : MonoBehaviour, IDropHandler
 		if (m_madePotionsList.AddPotion(m_potionBeingCreated))
 		{
 			m_potionBeingCreated = new Potion(true);
-			//m_texts[0].text = "None";
-			//m_texts[1].text = "Nothing";
-			//m_texts[2].text = "Transparent";
 			m_buffImage.gameObject.SetActive(false);
 			m_image.sprite = m_transparentSprite;
 		}
@@ -102,22 +98,21 @@ public class PotionMaker : MonoBehaviour, IDropHandler
 				m_buffImage.gameObject.SetActive(true);
 				m_buffImage.sprite = buffIngredient.m_potionImage;
 
-				// Would we ever put in a nothing ingredient??
-				//switch (m_potionBeingCreated.m_buffType)
-				//{
-				//	case BuffType.Nothing:
-				//		m_buffImage.gameObject.SetActive(false);
-				//		break;
-				//	case BuffType.Speed:
-				//		m_buffImage.sprite = m_speedSprite;
-				//		break;
-				//	case BuffType.Damage:
-				//		m_buffImage.sprite = m_damageSprite;
-				//		break;
-				//	case BuffType.HardenedSkin:
-				//		m_buffImage.sprite = m_invincibleSprite;
-				//		break;
-				//}
+				switch (m_potionBeingCreated.m_buffType)
+				{
+					case BuffType.Nothing:
+						m_buffImage.gameObject.SetActive(false);
+						break;
+					case BuffType.Speed:
+						m_buffImage.sprite = m_speedSprite;
+						break;
+					case BuffType.Damage:
+						m_buffImage.sprite = m_damageSprite;
+						break;
+					case BuffType.HardenedSkin:
+						m_buffImage.sprite = m_invincibleSprite;
+						break;
+				}
 
 			}
 			else if (colorIngredient)

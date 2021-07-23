@@ -373,26 +373,6 @@ public class GameManager : MonoBehaviour
 
 		baseModifiers.AddRange(itemAndBuffModifiers);
 
-		List<ItemAndItemModifier> itemAndItemModifiers = new List<ItemAndItemModifier>();
-		List<ItemAndItemModifier> allItemAndItemModifiers = finalStatSettings.m_itemAndItemModifiers;
-
-
-		foreach (var currentItemAndItemModifier in allItemAndItemModifiers)
-		{
-			if (armorType == currentItemAndItemModifier.armorType && weaponType == currentItemAndItemModifier.weaponType)
-			{
-				itemAndItemModifiers.Add(currentItemAndItemModifier);
-
-				string debug = "Item and Item Modifier: " + currentItemAndItemModifier.weaponType + "with " +
-					currentItemAndItemModifier.armorType + " and value is " + currentItemAndItemModifier.modifier;
-
-				Debug.Log(debug);
-			}
-		}
-
-		baseModifiers.AddRange(itemAndItemModifiers);
-
-
 		int finalModifier = 0;
 		string finalWords = finalStatSettings.m_finalWords[finalStatSettings.m_finalWords.Count - 1];
 		int highestModifier = baseModifiers[0].modifier;

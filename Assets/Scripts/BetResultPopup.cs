@@ -25,6 +25,9 @@ public class BetResultPopup : MonoBehaviour
 	private TextMeshProUGUI m_potionBuff;
 
 	[SerializeField]
+	private Image m_potionImage;
+
+	[SerializeField]
 	private TextMeshProUGUI m_amountWon;
 
 	[SerializeField]
@@ -38,6 +41,19 @@ public class BetResultPopup : MonoBehaviour
 
 	[SerializeField]
 	private Customer m_customerContainer;
+
+	//TODO make this better when potions use ingredients
+	[SerializeField]
+	private Sprite m_redSprite;
+
+	[SerializeField]
+	private Sprite m_greenSprite;
+
+	[SerializeField]
+	private Sprite m_blueSprite;
+
+	[SerializeField]
+	private Sprite m_transparentSprite;
 
 
 	private AudioSource m_audioSource;
@@ -65,6 +81,24 @@ public class BetResultPopup : MonoBehaviour
 
 		m_potionStrength.text = createdPotion.m_healingStrength.ToString();
 		m_potionBuff.text =  createdPotion.m_buffType.ToString();
+
+		switch (createdPotion.m_potionColor)
+		{
+			case PotionColor.Transparent:
+				m_potionImage.sprite = m_transparentSprite;
+				break;
+			case PotionColor.Red:
+				m_potionImage.sprite = m_redSprite;
+				break;
+			case PotionColor.Green:
+				m_potionImage.sprite = m_greenSprite;
+				break;
+			case PotionColor.Blue:
+				m_potionImage.sprite = m_blueSprite;
+				break;
+			default:
+				break;
+		}
 
 		if (heroInDungeon.m_hero.m_selectedFloor > 0)
 		{

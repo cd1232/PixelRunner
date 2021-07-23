@@ -13,7 +13,7 @@ public class PotionMakingPanel : MonoBehaviour
 	private GameObject m_ingredientUIPrefab;
 
 	[SerializeField]
-	private GameObject m_gridLayout;
+	private GameObject m_ingredientsContainer;
 
 	[SerializeField]
 	private Canvas m_canvas;
@@ -21,7 +21,14 @@ public class PotionMakingPanel : MonoBehaviour
 	[SerializeField]
 	private Button m_refillButton;
 
+	private AudioSource m_audioSource;
+
 	private List<IngredientController> m_ingredientsDisplayed = new List<IngredientController>();
+
+	private void Awake()
+	{
+		m_audioSource = GetComponent<AudioSource>();
+	}
 
 	private void Start()
 	{
@@ -34,9 +41,10 @@ public class PotionMakingPanel : MonoBehaviour
 		int index = 0;
 		foreach (var ingredient in m_allIngredientScriptables)
 		{
-			GameObject newIngredientUI = Instantiate(m_ingredientUIPrefab, m_gridLayout.transform);
+			GameObject newIngredientUI = Instantiate(m_ingredientUIPrefab, m_ingredientsContainer.transform);
 			IngredientController ic = newIngredientUI.GetComponent<IngredientController>();
 			ic.SetupIngredient(ingredient, m_canvas, index);
+			newIngredientUI.GetComponent<RectTransform>().anchoredPosition = ic.GetIngredient().m_positionInBasket;
 			ic.OnIngredientConsumed += OnIngredientConsumed;
 			m_ingredientsDisplayed.Add(newIngredientUI.GetComponent<IngredientController>());
 			index++;
@@ -76,16 +84,21 @@ public class PotionMakingPanel : MonoBehaviour
 
 			if (!wasFound)
 			{
-				GameObject newIngredientUI = Instantiate(m_ingredientUIPrefab, m_gridLayout.transform);
-				newIngredientUI.transform.SetSiblingIndex(indexInGrid);
+				GameObject newIngredientUI = Instantiate(m_ingredientUIPrefab, m_ingredientsContainer.transform);
 				IngredientController ic = newIngredientUI.GetComponent<IngredientController>();
 				ic.SetupIngredient(ingredient, m_canvas, indexInGrid);
+				newIngredientUI.GetComponent<RectTransform>().anchoredPosition = ic.GetIngredient().m_positionInBasket;
 				ic.OnIngredientConsumed += OnIngredientConsumed;
 				m_ingredientsDisplayed.Add(newIngredientUI.GetComponent<IngredientController>());
 				numRefilled++;
 			}
 
 			indexInGrid++;
+		}
+
+		if (numRefilled > 0)
+		{
+			m_audioSource.Play();
 		}
 
 		GameManager.GetInstance().AddMoney(-(numRefilled * 3));

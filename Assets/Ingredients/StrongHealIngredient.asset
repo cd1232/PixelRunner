@@ -14,4 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_name: Strong
   m_image: {fileID: 21300000, guid: d1cff174256621543903ef1468ca1d7b, type: 3}
+  m_potionImage: {fileID: 0}
+  m_positionInBasket: {x: 256, y: 0}
   m_healingStrength: 3

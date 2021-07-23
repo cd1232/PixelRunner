@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_name: Blue
   m_image: {fileID: 21300000, guid: e8dab3db2e4f1b1478a3b3eb537f380c, type: 3}
-  m_potionImage: {fileID: 21300000, guid: 9cc4e5af8e9fa964c924759a04961a8a, type: 3}
+  m_potionImage: {fileID: 21300000, guid: 871397be4d3543e4d825e4e9eab40424, type: 3}
+  m_positionInBasket: {x: 256, y: -336}
   m_potionColor: 3

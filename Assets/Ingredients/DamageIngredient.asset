@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16ed7189e2b686b40aa8f9fb7fe03e03, type: 3}
   m_Name: DamageIngredient
   m_EditorClassIdentifier: 
-  m_name: Damager
+  m_name: Strength
   m_image: {fileID: 21300000, guid: c77aad18e0daaeb488558ec03fb009ef, type: 3}
   m_potionImage: {fileID: 21300000, guid: 858b5cda06a764645bab2afd7d3de7d6, type: 3}
+  m_positionInBasket: {x: 0, y: -168}
   m_buffType: 2

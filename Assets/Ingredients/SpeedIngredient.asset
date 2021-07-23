@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16ed7189e2b686b40aa8f9fb7fe03e03, type: 3}
   m_Name: SpeedIngredient
   m_EditorClassIdentifier: 
-  m_name: Speedy
+  m_name: Speed
   m_image: {fileID: 21300000, guid: 1ce8d15dcd59404459aae6993dab10e7, type: 3}
   m_potionImage: {fileID: 21300000, guid: 7ae3c630565de1e4ea8cd73d3922d33a, type: 3}
+  m_positionInBasket: {x: 128, y: -168}
   m_buffType: 1
