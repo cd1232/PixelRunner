@@ -27,7 +27,7 @@ public enum BuffType
 	Nothing,
 	Speed,
 	Damage,
-	HardenedSkin
+	IronSkin
 };
 
 public class Potion
@@ -64,7 +64,7 @@ public class Potion
 		return numMatching;
 	}
 
-	public void Reset()
+	private void Reset()
 	{
 		m_healingStrength = HealingStrength.None;
 		m_potionColor = PotionColor.Transparent;

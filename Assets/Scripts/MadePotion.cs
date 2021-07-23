@@ -94,7 +94,7 @@ public class MadePotion : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
 			case BuffType.Damage:
 				m_buffImage.sprite = m_damageSprite;
 				break;
-			case BuffType.HardenedSkin:
+			case BuffType.IronSkin:
 				m_buffImage.sprite = m_invincibleSprite;
 				break;
 		}

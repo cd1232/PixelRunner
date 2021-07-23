@@ -129,7 +129,7 @@ public class GameManager : MonoBehaviour
 	void DisplayHero()
 	{
 		m_bidAmount = 0;
-		m_chosenPotion.Reset();
+		m_chosenPotion = new Potion(true);
 
 		Hero newHero = GenerateNewHero();
 		m_heroes.Add(newHero);

@@ -28,7 +28,7 @@ MonoBehaviour:
   - buffType: 2
     text: gives me damage
   - buffType: 3
-    text: makes me invincible
+    text: gives me iron skin
   - buffType: 0
     text: nothing else
   m_potionColorText:

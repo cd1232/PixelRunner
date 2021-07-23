@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: StrongHealIngredient
   m_EditorClassIdentifier: 
   m_name: Strong
-  m_image: {fileID: 21300000, guid: d1cff174256621543903ef1468ca1d7b, type: 3}
+  m_image: {fileID: 21300000, guid: 2e41ce23ba6e210478fe77e2eba915e4, type: 3}
   m_potionImage: {fileID: 0}
   m_positionInBasket: {x: 256, y: 0}
   m_healingStrength: 3

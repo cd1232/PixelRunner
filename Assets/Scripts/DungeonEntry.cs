@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,9 +21,14 @@ public class DungeonEntry : MonoBehaviour
 
 	public Action<HeroInDungeon, DungeonEntry> OnPopup;
 
+	public float timeCountdown = 1.0f;
+	public float timeTimer = 0.0f;
+
 	public void Setup(HeroInDungeon hero)
-	{
+	{		
 		m_hero = hero;
+
+		m_heroImage.sprite = m_hero.m_hero.m_heroSprite;
 		m_heroStatus.sprite = m_timerImage;
 	}
 

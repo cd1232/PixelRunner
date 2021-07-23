@@ -13,5 +13,7 @@ MonoBehaviour:
   m_Name: WeakHealIngredient
   m_EditorClassIdentifier: 
   m_name: Weak
-  m_image: {fileID: 21300000, guid: febb89cf257bde8439a13d14f09bb5c4, type: 3}
+  m_image: {fileID: 21300000, guid: 26557869bf323cd41aaae6f8cf1b636d, type: 3}
+  m_potionImage: {fileID: 0}
+  m_positionInBasket: {x: 0, y: 0}
   m_healingStrength: 1
