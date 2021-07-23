@@ -72,6 +72,11 @@ public class PotionMaker : MonoBehaviour, IDropHandler
 
 	public void OnDrop(PointerEventData eventData)
 	{
+		if (!eventData.pointerDrag.GetComponent<IngredientController>())
+		{
+			return;
+		}
+
 		Ingredient ingredientInfo = eventData.pointerDrag.GetComponent<IngredientController>().GetIngredient();
 		if (ingredientInfo)
 		{

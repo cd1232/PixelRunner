@@ -11,6 +11,9 @@ public class BetResultPopup : MonoBehaviour
 	[SerializeField]
 	private TextMeshProUGUI m_finalWords;
 
+	[SerializeField]
+	private TextMeshProUGUI m_heading;
+
 	// Includes bet amount. like $20 on floor 1
 	[SerializeField]
 	private TextMeshProUGUI m_floorBet;
@@ -65,12 +68,22 @@ public class BetResultPopup : MonoBehaviour
 
 		if (heroInDungeon.m_hero.m_selectedFloor > 0)
 		{
-			m_floorBet.text = "$" + heroInDungeon.m_bidAmount.ToString("F0") + " on floor " + heroInDungeon.m_placeOfDeath;
-			m_amountWon.text = "Reward: $" + heroInDungeon.m_MoneyWon.ToString("F2") + " ($" + heroInDungeon.m_bidAmount + "x" + heroInDungeon.m_rewardMultiplier.ToString("F2") + ")";
+			m_floorBet.text = "$" + heroInDungeon.m_bidAmount.ToString("F0") + " on floor " + heroInDungeon.m_hero.m_selectedFloor;
+			m_amountWon.text = "Reward: $" + heroInDungeon.m_MoneyWon.ToString("F2");// + " ($" + heroInDungeon.m_bidAmount + "x" + heroInDungeon.m_rewardMultiplier.ToString("F2") + ")";
+
+			if (heroInDungeon.m_placeOfDeath != heroInDungeon.m_hero.m_selectedFloor)
+			{
+				m_heading.text = "you were wrong!";
+			}
+			else if (heroInDungeon.m_placeOfDeath == heroInDungeon.m_hero.m_selectedFloor)
+			{
+				m_heading.text = "you were right!";
+			}
 		}
 		else
 		{
-			m_floorBet.text = "You didn't bet on this hero";
+			m_heading.text = "Results";
+			m_floorBet.text = "No Bet";
 			m_amountWon.text = "Reward: $0.00";
 		}
 	

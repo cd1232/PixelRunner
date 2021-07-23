@@ -48,6 +48,13 @@ public class ItemAndBuffModifier : BaseModifier
 }
 
 [Serializable]
+public class ItemAndItemModifier : BaseModifier
+{
+	public WeaponType weaponType;
+	public ArmorType armorType;
+}
+
+[Serializable]
 public class BetReward
 {
 	public int difference = 0;
@@ -62,5 +69,9 @@ public class FinalStatSettings : ScriptableObject
 	public List<ItemModifier> m_ItemModifiers = new List<ItemModifier>();
 	public List<BuffModifier> m_buffModifiers = new List<BuffModifier>();
 	public List<ItemAndBuffModifier> m_itemAndBuffModifiers = new List<ItemAndBuffModifier>();
+	public List<ItemAndItemModifier> m_itemAndItemModifiers = new List<ItemAndItemModifier>();
+
+	public List<BaseModifier> m_baseModifiers = new List<BaseModifier>();
+
 	public List<BetReward> m_betRewards = new List<BetReward>();
 }

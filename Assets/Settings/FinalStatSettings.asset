@@ -13,34 +13,51 @@ MonoBehaviour:
   m_Name: FinalStatSettings
   m_EditorClassIdentifier: 
   m_finalWords:
-  - I should have bought more healing
-  - This armor is too heavy to use the dagger
-  - "This sword slows me down and I don\u2019t have enough defense"
-  - Invincible Buff is awesome
-  - "Dagger and Speed, I can\u2019t ask for more"
-  - I fought like a feather
-  - Buffed Sword goes brrrr
-  - I fought like a tank
-  - Where is my sword?
-  - You guys are getting armor???
+  - Too little health can only bring you this far
+  - My huge HP was a great help
+  - Oops, I forgot my weapon
+  - I should have brought my armor
+  - This item set is amazing
+  - My skin is my armor
+  - Iron Fists!
+  - They couldn't see my swift dagger
+  - They didn't even see me coming
+  - They couldn't withstand the power of my sword
+  - They couldn't destroy my armor
   - I tried my best
   m_healthModifiers:
-  - modifier: -4
+  - modifier: 0
     finalWord: 0
     min: 1
+    max: 3
+  - modifier: 1
+    finalWord: 0
+    min: 4
     max: 5
   - modifier: 2
     finalWord: -1
     min: 6
-    max: 12
+    max: 7
+  - modifier: 3
+    finalWord: -1
+    min: 8
+    max: 9
   - modifier: 4
     finalWord: -1
+    min: 10
+    max: 12
+  - modifier: 5
+    finalWord: 1
     min: 13
-    max: 18
+    max: 14
   - modifier: 6
-    finalWord: -1
-    min: 19
-    max: 24
+    finalWord: 1
+    min: 15
+    max: 16
+  - modifier: 7
+    finalWord: 1
+    min: 17
+    max: 20
   m_ItemModifiers:
   - modifier: -2
     finalWord: 1
@@ -76,8 +93,8 @@ MonoBehaviour:
   - modifier: 1
     finalWord: -1
     buffType: 1
-  - modifier: 4
-    finalWord: 3
+  - modifier: 1
+    finalWord: -1
     buffType: 3
   - modifier: 1
     finalWord: -1
@@ -86,40 +103,59 @@ MonoBehaviour:
     finalWord: -1
     buffType: 0
   m_itemAndBuffModifiers:
+  - modifier: 1
+    finalWord: 5
+    buffType: 3
+    weaponType: 0
+    armorType: 0
+    itemModifierState: 0
   - modifier: 2
-    finalWord: 4
+    finalWord: 6
+    buffType: 3
+    weaponType: 0
+    armorType: 0
+    itemModifierState: 1
+  - modifier: 2
+    finalWord: 6
+    buffType: 3
+    weaponType: 0
+    armorType: 0
+    itemModifierState: 1
+  - modifier: 2
+    finalWord: 7
     buffType: 1
     weaponType: 1
     armorType: 0
     itemModifierState: 0
-  - modifier: 2
-    finalWord: 5
+  - modifier: 1
+    finalWord: 8
     buffType: 1
-    weaponType: 0
+    weaponType: 1
     armorType: 1
     itemModifierState: 1
   - modifier: 2
-    finalWord: 6
+    finalWord: 9
     buffType: 2
     weaponType: 2
-    armorType: 0
+    armorType: 1
     itemModifierState: 0
-  - modifier: 2
-    finalWord: 7
+  - modifier: 1
+    finalWord: 10
     buffType: 2
-    weaponType: 0
+    weaponType: 2
     armorType: 2
     itemModifierState: 1
+  m_itemAndItemModifiers:
   - modifier: 2
-    finalWord: -1
-    buffType: 3
-    weaponType: 0
-    armorType: 0
-    itemModifierState: 2
+    finalWord: 4
+    weaponType: 1
+    armorType: 1
+  - modifier: 2
+    finalWord: 4
+    weaponType: 2
+    armorType: 2
   m_betRewards:
   - difference: 0
     multiplier: 2
   - difference: 1
     multiplier: 1.5
-  - difference: 2
-    multiplier: 1.25

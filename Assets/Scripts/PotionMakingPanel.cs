@@ -76,7 +76,6 @@ public class PotionMakingPanel : MonoBehaviour
 
 			if (!wasFound)
 			{
-				Debug.Log("Couldn't find " + ingredient.m_name);
 				GameObject newIngredientUI = Instantiate(m_ingredientUIPrefab, m_gridLayout.transform);
 				newIngredientUI.transform.SetSiblingIndex(indexInGrid);
 				IngredientController ic = newIngredientUI.GetComponent<IngredientController>();

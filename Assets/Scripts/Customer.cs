@@ -46,7 +46,7 @@ public class Customer : MonoBehaviour, IDropHandler
 
 	private Potion m_wantedPotion;
 
-	private Image m_customerIcon;
+	private AudioSource m_audioSource;
 
 	private string m_originalCustomerComments;
 
@@ -54,7 +54,7 @@ public class Customer : MonoBehaviour, IDropHandler
 
 	private void Awake()
 	{
-		m_customerIcon = GetComponent<Image>();
+		m_audioSource = GetComponent<AudioSource>();
 	}
 
 	public void Start()
@@ -91,6 +91,8 @@ public class Customer : MonoBehaviour, IDropHandler
 		MadePotion givenPotion = eventData.pointerDrag.GetComponent<MadePotion>();
 		if (givenPotion != null)
 		{
+			m_audioSource.Play();
+
 			Potion potion = givenPotion.m_potion;
 
 			if (m_wantedPotion == null)

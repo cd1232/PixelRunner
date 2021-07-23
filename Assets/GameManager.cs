@@ -64,6 +64,7 @@ public class GameManager : MonoBehaviour
 	public Action<KeyValuePair<HeroInDungeon, float>> OnAddHeroToDungeon;
 	public Action<HeroInDungeon> OnHeroFinishedDungeon;
 	public Action<float> OnMoneyChanged;
+	public Action OnMoneyAdded;
 	public Action OnGameEnded;
 	public Action OnPotionGiven;
 
@@ -111,7 +112,6 @@ public class GameManager : MonoBehaviour
 
 		// if tutorial is on
 		// delay start of game and first go through the tutorial
-
 		m_hasGameEnded = false;
 		m_dungeonHeroes.Clear();
 		m_heroes.Clear();
@@ -164,10 +164,10 @@ public class GameManager : MonoBehaviour
 		switch (heroMaxHPLevel)
 		{
 			case 0:
-				heroMaxHP = 4;
+				heroMaxHP = 8;
 				break;
 			case 1:
-				heroMaxHP = 8;
+				heroMaxHP = 10;
 				break;
 			case 2:
 				heroMaxHP = 12;
@@ -220,7 +220,14 @@ public class GameManager : MonoBehaviour
 
 	public void AddMoney(float addedAmount)
 	{
+		float previousMoney = m_currentMoney;
+
 		m_currentMoney += addedAmount;
+
+		if (m_currentMoney > previousMoney)
+		{
+			OnMoneyAdded?.Invoke();
+		}
 		OnMoneyChanged?.Invoke(m_currentMoney);
 
 		if (m_currentMoney > m_highestEarnings)
@@ -276,8 +283,6 @@ public class GameManager : MonoBehaviour
 		float heroHPCalc = heroInDungeon.m_hero.m_heroStats.m_currentHP;
 		int maxHeroHP = heroInDungeon.m_hero.m_heroStats.m_maxHP;
 
-		// TODO
-		// Next hero without creating a potion?
 		switch (heroInDungeon.m_hero.m_createdPotion.m_healingStrength)
 		{
 			case HealingStrength.Weak:
@@ -291,6 +296,8 @@ public class GameManager : MonoBehaviour
 				break;
 		}
 
+		List<BaseModifier> baseModifiers = new List<BaseModifier>();
+
 		HealthModifier healthModifier = finalStatSettings.m_healthModifiers.Find(modifier => heroHPCalc >= modifier.min && heroHPCalc <= modifier.max);
 		BuffModifier buffModifier = finalStatSettings.m_buffModifiers.Find(modifier => modifier.buffType == heroInDungeon.m_hero.m_createdPotion.m_buffType);
 
@@ -298,99 +305,141 @@ public class GameManager : MonoBehaviour
 
 		Debug.Log("Buff Modifier: Type is " + buffModifier.buffType + " and value is " + buffModifier.modifier);
 
+		baseModifiers.Add(healthModifier);
+		baseModifiers.Add(buffModifier);
 
-		ItemModifier itemModifier = new ItemModifier();
-		ItemAndBuffModifier itemAndBuffModifier = new ItemAndBuffModifier();
 
-		List<ItemModifier> itemModifiers = finalStatSettings.m_ItemModifiers;
+		List<ItemModifier> itemModifiers = new List<ItemModifier>();
+
+		List<ItemModifier> allItemModifiers = finalStatSettings.m_ItemModifiers;
 
 		WeaponType weaponType = heroInDungeon.m_hero.m_heroStats.m_weaponType;
 		ArmorType armorType = heroInDungeon.m_hero.m_heroStats.m_armorType;
-		foreach (var currentItemModifier in itemModifiers)
+		foreach (var currentItemModifier in allItemModifiers)
 		{
 			if ((weaponType == currentItemModifier.weaponType && armorType == currentItemModifier.armorType && currentItemModifier.itemModifierState == ItemModifierState.UseBoth) ||
 				(weaponType == currentItemModifier.weaponType && currentItemModifier.itemModifierState == ItemModifierState.UseWeapon) ||
 				(armorType == currentItemModifier.armorType && currentItemModifier.itemModifierState == ItemModifierState.UseArmor))
 			{
-				itemModifier = currentItemModifier;
+				itemModifiers.Add(currentItemModifier);
 
 				string debug = "Item Modifier: ";
-				switch (itemModifier.itemModifierState)
+				switch (currentItemModifier.itemModifierState)
 				{
 					case ItemModifierState.UseWeapon:
-						debug += itemModifier.weaponType;
+						debug += currentItemModifier.weaponType;
 						break;
 					case ItemModifierState.UseArmor:
-						debug += itemModifier.armorType;
+						debug += currentItemModifier.armorType;
 						break;
 					case ItemModifierState.UseBoth:
-						debug += itemModifier.weaponType + " with " + itemModifier.armorType;
+						debug += currentItemModifier.weaponType + " with " + currentItemModifier.armorType;
 						break;
 				}
 
-				debug += " and value is " + itemModifier.modifier;
+				debug += " and value is " + currentItemModifier.modifier;
 				Debug.Log(debug);
 			}
 		}
 
-		List<ItemAndBuffModifier> itemAndBuffModifiers = finalStatSettings.m_itemAndBuffModifiers;
+		baseModifiers.AddRange(itemModifiers);
+
+		List<ItemAndBuffModifier> itemAndBuffModifiers = new List<ItemAndBuffModifier>();
+		List<ItemAndBuffModifier> allItemAndBuffModifiers = finalStatSettings.m_itemAndBuffModifiers;
 
 		BuffType buffType = heroInDungeon.m_hero.m_createdPotion.m_buffType;
 
-		foreach (var currentItemAndBuffModifier in itemAndBuffModifiers)
+		foreach (var currentItemAndBuffModifier in allItemAndBuffModifiers)
 		{
 			if (buffType == currentItemAndBuffModifier.buffType)
 			{
 				if ((armorType == currentItemAndBuffModifier.armorType && currentItemAndBuffModifier.itemModifierState == ItemModifierState.UseArmor) ||
 					(weaponType == currentItemAndBuffModifier.weaponType && currentItemAndBuffModifier.itemModifierState == ItemModifierState.UseWeapon))
 				{
-					itemAndBuffModifier = currentItemAndBuffModifier;
-					string debug = "Item and Buff Modifier: ";
-					if (itemAndBuffModifier.itemModifierState == ItemModifierState.UseArmor)
-						debug += itemAndBuffModifier.armorType;
-					else
-						debug += itemAndBuffModifier.weaponType;
+					itemAndBuffModifiers.Add(currentItemAndBuffModifier);
 
-					debug += " with " + itemAndBuffModifier.buffType + " and value is " + itemAndBuffModifier.modifier;
+
+					string debug = "Item and Buff Modifier: ";
+					if (currentItemAndBuffModifier.itemModifierState == ItemModifierState.UseArmor)
+						debug += currentItemAndBuffModifier.armorType;
+					else
+						debug += currentItemAndBuffModifier.weaponType;
+
+					debug += " with " + currentItemAndBuffModifier.buffType + " and value is " + currentItemAndBuffModifier.modifier;
 					Debug.Log(debug);
 				}
 			}
 		}
 
-		int finalModifier = healthModifier.modifier + itemModifier.modifier + buffModifier.modifier + itemAndBuffModifier.modifier + Random.Range(-1, 2);
+		baseModifiers.AddRange(itemAndBuffModifiers);
+
+		List<ItemAndItemModifier> itemAndItemModifiers = new List<ItemAndItemModifier>();
+		List<ItemAndItemModifier> allItemAndItemModifiers = finalStatSettings.m_itemAndItemModifiers;
+
+
+		foreach (var currentItemAndItemModifier in allItemAndItemModifiers)
+		{
+			if (armorType == currentItemAndItemModifier.armorType && weaponType == currentItemAndItemModifier.weaponType)
+			{
+				itemAndItemModifiers.Add(currentItemAndItemModifier);
+
+				string debug = "Item and Item Modifier: " + currentItemAndItemModifier.weaponType + "with " +
+					currentItemAndItemModifier.armorType + " and value is " + currentItemAndItemModifier.modifier;
+
+				Debug.Log(debug);
+			}
+		}
+
+		baseModifiers.AddRange(itemAndItemModifiers);
+
+
+		int finalModifier = 0;
+		string finalWords = finalStatSettings.m_finalWords[finalStatSettings.m_finalWords.Count - 1];
+		int highestModifier = baseModifiers[0].modifier;
+
+		Debug.Log("All modifiers:");
+		foreach (var modifier in baseModifiers)
+		{
+			Debug.Log("Modifier value is: " + modifier.modifier);
+			finalModifier += modifier.modifier;
+
+			if (Math.Abs(modifier.modifier) > highestModifier && modifier.finalWord >= 0)
+			{
+				highestModifier = modifier.modifier;
+				finalWords = finalStatSettings.m_finalWords[modifier.finalWord];
+			}
+		}
 		Debug.Log("Final Modifier: " + finalModifier);
 
-		heroInDungeon.m_placeOfDeath = finalModifier > 0 ? finalModifier : 1;
-		if (finalModifier > 10)
+		if (finalModifier < 5)
+		{
+			heroInDungeon.m_placeOfDeath = 1;
+		}
+		else if (finalModifier == 5)
+		{
+			heroInDungeon.m_placeOfDeath = 2;
+		}
+		else if (finalModifier == 6)
+		{
+			heroInDungeon.m_placeOfDeath = 3;
+		}
+		else if (finalModifier == 7)
+		{
+			heroInDungeon.m_placeOfDeath = 4;
+		}
+		else if (finalModifier < 10)
+		{
+			heroInDungeon.m_placeOfDeath = 5;
+		}
+
+		if (finalModifier > 9)
 		{
 			heroInDungeon.m_hasDungeonBeenBeaten = true;
 			heroInDungeon.m_MoneyWon = -(m_currentMoney / 2);
 		}
 		else
 		{
-			BaseModifier finalWordModifier = healthModifier;
-
-			if (Math.Abs(buffModifier.modifier) > Math.Abs(finalWordModifier.modifier))
-			{
-				finalWordModifier = buffModifier;
-			}
-
-			if (Math.Abs(itemModifier.modifier) > Math.Abs(finalWordModifier.modifier))
-			{
-				finalWordModifier = itemModifier;
-			}
-
-			if (Math.Abs(itemAndBuffModifier.modifier) > Math.Abs(finalWordModifier.modifier))
-			{
-				finalWordModifier = itemAndBuffModifier;
-			}
-
-			string finalWords = "";
-			if (finalWordModifier.finalWord >= 0)
-			{
-				finalWords = finalStatSettings.m_finalWords[finalWordModifier.finalWord];
-				heroInDungeon.m_finalWords = finalWords;
-			}
+			heroInDungeon.m_finalWords = finalWords;
 
 			int placeOfDeath = heroInDungeon.m_placeOfDeath;
 			int guessedFloor = heroInDungeon.m_hero.m_selectedFloor;
@@ -407,12 +456,6 @@ public class GameManager : MonoBehaviour
 				heroInDungeon.m_rewardMultiplier = 0.0f;
 				heroInDungeon.m_MoneyWon = 0.0f;
 				// No reward
-			}
-
-			// Use the last final word if there isn't anything there (as long as they hero hasn't won the dungeon)
-			if (finalWords == "")
-			{
-				finalWords = finalStatSettings.m_finalWords[finalStatSettings.m_finalWords.Count - 1];
 			}
 		}
 

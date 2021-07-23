@@ -1005,6 +1005,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_placeOfDeath: {fileID: 7589659714754436646}
   m_finalWords: {fileID: 9068235718062466203}
+  m_heading: {fileID: 5055344681376666932}
   m_floorBet: {fileID: 2189739311304462807}
   m_potionStrength: {fileID: 7248166376047257776}
   m_potionBuff: {fileID: 784553050489560458}

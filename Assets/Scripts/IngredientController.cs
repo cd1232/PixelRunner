@@ -20,8 +20,11 @@ public class IngredientController : MonoBehaviour, IPointerDownHandler, IBeginDr
 
 	public Action<IngredientController> OnIngredientConsumed;
 
+	private AudioSource m_audioSource;
+
 	void Awake()
 	{
+		m_audioSource = GetComponent<AudioSource>();
 		m_canvasGroup = GetComponent<CanvasGroup>();
 		m_rectTransform = GetComponent<RectTransform>();
 		m_ingredientImage = GetComponent<Image>();
@@ -73,5 +76,6 @@ public class IngredientController : MonoBehaviour, IPointerDownHandler, IBeginDr
 
 	public void OnPointerDown(PointerEventData eventData)
 	{
+		m_audioSource.Play();
 	}
 }

@@ -10,14 +10,7 @@ public class MadePotionsList : MonoBehaviour
 	[SerializeField]
 	private Canvas m_canvas;
 
-	[SerializeField]
-	private int m_maxMadePotions = 1;
-
 	private MadePotion m_madePotion;
-
-	private void Awake()
-	{
-	}
 
 	public bool AddPotion(Potion potion)
 	{

@@ -41,11 +41,11 @@ public class MadePotion : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
 
 	private List<TextMeshProUGUI> m_texts = new List<TextMeshProUGUI>();
 
-	private HorizontalLayoutGroup m_horizontalLayoutGroup;
-
 	private Button m_destoryButton;
 
 	private MadePotionsList m_madePotionsParent;
+
+	private Transform m_potionContainer;
 
 
 	void Awake()
@@ -70,7 +70,7 @@ public class MadePotion : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
 
 	public void SetupMadePotion(Potion potion, Canvas canvas, MadePotionsList madePotionsParent)
 	{
-		m_horizontalLayoutGroup = GetComponentInParent<HorizontalLayoutGroup>();
+		m_potionContainer = GetComponentInParent<Transform>();
 		m_canvas = canvas;
 		m_potion = potion;
 		m_madePotionsParent = madePotionsParent;
@@ -136,7 +136,7 @@ public class MadePotion : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
 	{
 		m_canvasGroup.blocksRaycasts = true;
 		m_canvasGroup.alpha = 1.0f;
-		transform.SetParent(m_horizontalLayoutGroup.transform);
+		transform.SetParent(m_potionContainer);
 	}
 
 	public void OnPointerDown(PointerEventData eventData)
