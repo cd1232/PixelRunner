@@ -36,5 +36,8 @@ public class Hero
 	public Potion m_wantedPotion;
 	[SerializeField]
 	public Potion m_createdPotion;
+
+	public Sprite m_heroSprite;
+
 	public int m_selectedFloor = 0;
 }

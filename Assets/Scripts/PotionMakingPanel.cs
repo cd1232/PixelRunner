@@ -35,46 +35,57 @@ public class PotionMakingPanel : MonoBehaviour
 		foreach (var ingredient in m_allIngredientScriptables)
 		{
 			GameObject newIngredientUI = Instantiate(m_ingredientUIPrefab, m_gridLayout.transform);
-			newIngredientUI.GetComponent<IngredientController>().SetupIngredient(ingredient, m_canvas, index);
+			IngredientController ic = newIngredientUI.GetComponent<IngredientController>();
+			ic.SetupIngredient(ingredient, m_canvas, index);
+			ic.OnIngredientConsumed += OnIngredientConsumed;
 			m_ingredientsDisplayed.Add(newIngredientUI.GetComponent<IngredientController>());
 			index++;
 		}
 	}
 
+	void OnIngredientConsumed(IngredientController ic)
+	{
+		m_ingredientsDisplayed.Remove(ic);
+	}
+
 	void HideRefillButton()
 	{
-		m_refillButton.gameObject.SetActive(false);
+		m_refillButton.transform.parent.gameObject.SetActive(false);
 	}
 
 	void ShowRefillButton(Hero hero)
 	{
-		m_refillButton.gameObject.SetActive(true);
+		m_refillButton.transform.parent.gameObject.SetActive(true);
 	}
 
 	void OnRefillButtonPressed()
 	{
 		int numRefilled = 0;
-		int indexInGrid = 0;
-
-		foreach (var ingredient in m_ingredientsDisplayed)
-		{
-			Debug.Log("Ingredient Displayed: " + ingredient.GetIngredient().m_name);
-		}
+		int indexInGrid = 0;		
 
 		foreach (var ingredient in m_allIngredientScriptables)
 		{
-			// If can't find the ingredient in the disaplyed ingredients
-			IngredientController ic = m_ingredientsDisplayed.Find(ingredientController => ingredientController.GetIngredient().m_name == ingredient.m_name);
+			bool wasFound = false;
+			foreach (var ingredientDisplayed in m_ingredientsDisplayed)
+			{
+				if (ingredientDisplayed.GetIngredient().m_name == ingredient.m_name)
+				{
+					wasFound = true;
+				}
+			}
 
-			if (m_ingredientsDisplayed.Find(ingredientController => ingredientController.GetIngredient().m_name == ingredient.m_name) == null)
+			if (!wasFound)
 			{
 				Debug.Log("Couldn't find " + ingredient.m_name);
 				GameObject newIngredientUI = Instantiate(m_ingredientUIPrefab, m_gridLayout.transform);
-				newIngredientUI.GetComponent<IngredientController>().SetupIngredient(ingredient, m_canvas, indexInGrid);
 				newIngredientUI.transform.SetSiblingIndex(indexInGrid);
+				IngredientController ic = newIngredientUI.GetComponent<IngredientController>();
+				ic.SetupIngredient(ingredient, m_canvas, indexInGrid);
+				ic.OnIngredientConsumed += OnIngredientConsumed;
 				m_ingredientsDisplayed.Add(newIngredientUI.GetComponent<IngredientController>());
 				numRefilled++;
 			}
+
 			indexInGrid++;
 		}
 

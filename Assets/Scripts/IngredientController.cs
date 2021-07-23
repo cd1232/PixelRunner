@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -17,6 +18,8 @@ public class IngredientController : MonoBehaviour, IPointerDownHandler, IBeginDr
 
 	private int m_indexInGrid = -1;
 
+	public Action<IngredientController> OnIngredientConsumed;
+
 	void Awake()
 	{
 		m_canvasGroup = GetComponent<CanvasGroup>();
@@ -32,6 +35,11 @@ public class IngredientController : MonoBehaviour, IPointerDownHandler, IBeginDr
 	public Ingredient GetIngredient()
 	{
 		return m_ingredient;
+	}
+
+	private void OnDestroy()
+	{
+		OnIngredientConsumed?.Invoke(this);
 	}
 
 	public void SetupIngredient(Ingredient ingredient, Canvas canvas, int indexInGrid)

@@ -20,6 +20,9 @@ public class Customer : MonoBehaviour, IDropHandler
 	private Slider m_healthBar;
 
 	[SerializeField]
+	private Image m_heroImage;
+
+	[SerializeField]
 	private Sprite m_swordSprite;
 
 	[SerializeField]
@@ -27,6 +30,16 @@ public class Customer : MonoBehaviour, IDropHandler
 
 	[SerializeField]
 	private Sprite m_unarmedSprite;
+
+
+	[SerializeField]
+	private Sprite m_lightArmorSprite;
+
+	[SerializeField]
+	private Sprite m_heavyArmorSprite;
+
+	[SerializeField]
+	private Sprite m_noArmorSprite;
 
 	[SerializeField]
 	private PotionTextSettings m_potionTextSettings;
@@ -51,7 +64,10 @@ public class Customer : MonoBehaviour, IDropHandler
 
 	void OnGameEnded()
 	{
-		m_customerComments.text = "";
+		if (m_customerComments)
+		{
+			m_customerComments.text = "";
+		}
 	}
 
 	public void OnDrop(PointerEventData eventData)
@@ -64,9 +80,12 @@ public class Customer : MonoBehaviour, IDropHandler
 		IngredientController ingredientController = eventData.pointerDrag.GetComponent<IngredientController>();
 		if (ingredientController != null)
 		{
-			StartCoroutine(ShowIngredientComment());
-			// return to original comments
-			return;
+			if (m_customerComments)
+			{
+				StartCoroutine(ShowIngredientComment());
+				// return to original comments
+				return;
+			}
 		}
 
 		MadePotion givenPotion = eventData.pointerDrag.GetComponent<MadePotion>();
@@ -83,23 +102,26 @@ public class Customer : MonoBehaviour, IDropHandler
 				Debug.Log("given potion is null");
 			}
 
-			int matchingIngredients = Potion.GetNumMatchingIngredidents(potion, m_wantedPotion);
-			if (matchingIngredients == 3)
+			if (m_customerComments)
 			{
-				m_customerComments.text = "Thanks this is exactly what I wanted";
-			}
-			else if (matchingIngredients == 2)
-			{
-				m_customerComments.text = "This is kind of what I wanted I guess";
-			}
-			else if (matchingIngredients == 1)
-			{
-				m_customerComments.text = "At least you got something right..";
-			}
-			else
-			{
-				m_customerComments.text = "Did you even listen to what I wanted?";
-			}
+				int matchingIngredients = Potion.GetNumMatchingIngredidents(potion, m_wantedPotion);
+				if (matchingIngredients == 3)
+				{
+					m_customerComments.text = "Thanks this is exactly what I wanted";
+				}
+				else if (matchingIngredients == 2)
+				{
+					m_customerComments.text = "This is kind of what I wanted I guess";
+				}
+				else if (matchingIngredients == 1)
+				{
+					m_customerComments.text = "At least you got something right..";
+				}
+				else
+				{
+					m_customerComments.text = "Did you even listen to what I wanted?";
+				}
+			}			
 
 			m_hasReceivedPotion = true;
 			GameManager.GetInstance().SetCreatedPotion(potion.m_healingStrength, potion.m_buffType, potion.m_potionColor);
@@ -133,7 +155,13 @@ public class Customer : MonoBehaviour, IDropHandler
 
 			string textToDisplay = startText + healingStrengthText + " and " + buffText + ". Can you make it " + potionColorText + "?";
 			m_originalCustomerComments = textToDisplay;
-			m_customerComments.text = textToDisplay;
+
+			if (m_customerComments)
+			{
+				m_customerComments.text = textToDisplay;
+			}
+
+			m_heroImage.sprite = hero.m_heroSprite;
 
 			switch (stats.m_weaponType)
 			{
@@ -150,6 +178,19 @@ public class Customer : MonoBehaviour, IDropHandler
 					break;
 			}
 
+			switch (stats.m_armorType)
+			{
+				case ArmorType.NakedDisplay:
+					m_armorImage.sprite = m_noArmorSprite;
+					break;
+				case ArmorType.LightArmor:
+					m_armorImage.sprite = m_lightArmorSprite;
+					break;
+				case ArmorType.HeavyArmor:
+					m_armorImage.sprite = m_heavyArmorSprite;
+					break;
+			}
+
 			TextMeshProUGUI healthBarText = m_healthBar.GetComponentInChildren<TextMeshProUGUI>();
 			if (healthBarText)
 			{
@@ -160,7 +201,10 @@ public class Customer : MonoBehaviour, IDropHandler
 		}
 		else
 		{
-			m_customerComments.text = "";
+			if (m_customerComments)
+			{
+				m_customerComments.text = "";
+			}
 		}
 
 	}

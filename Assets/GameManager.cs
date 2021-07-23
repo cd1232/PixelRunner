@@ -46,6 +46,12 @@ public class GameManager : MonoBehaviour
 	private float m_winningAmount = 200.0f;
 
 	[SerializeField]
+	private List<Sprite> m_lightArmorHeroSprites = new List<Sprite>();
+
+	[SerializeField]
+	private List<Sprite> m_heavyArmorHeroSprites = new List<Sprite>();
+
+	[SerializeField]
 	private FinalStatSettings finalStatSettings;
 
 	[SerializeField]
@@ -143,6 +149,15 @@ public class GameManager : MonoBehaviour
 
 		newHeroStats.m_armorType = (ArmorType) Random.Range(0, 3);
 		newHeroStats.m_weaponType = (WeaponType) Random.Range(0, 3);
+
+		if (newHeroStats.m_armorType == ArmorType.HeavyArmor)
+		{
+			newHero.m_heroSprite = m_heavyArmorHeroSprites[Random.Range(0, m_heavyArmorHeroSprites.Count)];
+		}
+		else
+		{
+			newHero.m_heroSprite = m_lightArmorHeroSprites[Random.Range(0, m_lightArmorHeroSprites.Count)];
+		}
 
 		int heroMaxHP = 4;
 		int heroMaxHPLevel = Random.Range(0, 3);
@@ -261,6 +276,8 @@ public class GameManager : MonoBehaviour
 		float heroHPCalc = heroInDungeon.m_hero.m_heroStats.m_currentHP;
 		int maxHeroHP = heroInDungeon.m_hero.m_heroStats.m_maxHP;
 
+		// TODO
+		// Next hero without creating a potion?
 		switch (heroInDungeon.m_hero.m_createdPotion.m_healingStrength)
 		{
 			case HealingStrength.Weak:

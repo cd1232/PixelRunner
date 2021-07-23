@@ -35,6 +35,8 @@ public class MadePotion : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
 	private CanvasGroup m_canvasGroup;
 	private RectTransform m_rectTransform;
 	private Image m_potionImage;
+
+	[SerializeField]
 	private Image m_buffImage;
 
 	private List<TextMeshProUGUI> m_texts = new List<TextMeshProUGUI>();
@@ -82,7 +84,7 @@ public class MadePotion : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
 		switch (m_potion.m_buffType)
 		{
 			case BuffType.Nothing:
-				m_buffImage.gameObject.SetActive(false);
+				//m_buffImage.gameObject.SetActive(false);
 				break;
 			case BuffType.Speed:
 				m_buffImage.sprite = m_speedSprite;

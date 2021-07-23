@@ -48,7 +48,7 @@ public class PotionMaker : MonoBehaviour, IDropHandler
 	void Awake()
 	{
 		m_audioSource = GetComponent<AudioSource>();
-		m_texts.AddRange(GetComponentsInChildren<TextMeshProUGUI>());
+		//m_texts.AddRange(GetComponentsInChildren<TextMeshProUGUI>());
 	}
 
 	public void Start()
@@ -62,9 +62,9 @@ public class PotionMaker : MonoBehaviour, IDropHandler
 		if (m_madePotionsList.AddPotion(m_potionBeingCreated))
 		{
 			m_potionBeingCreated = new Potion(true);
-			m_texts[0].text = "None";
-			m_texts[1].text = "Nothing";
-			m_texts[2].text = "Transparent";
+			//m_texts[0].text = "None";
+			//m_texts[1].text = "Nothing";
+			//m_texts[2].text = "Transparent";
 			m_buffImage.gameObject.SetActive(false);
 			m_image.sprite = m_transparentSprite;
 		}
@@ -86,13 +86,13 @@ public class PotionMaker : MonoBehaviour, IDropHandler
 			if (healingIngredient)
 			{
 				m_potionBeingCreated.m_healingStrength = healingIngredient.m_healingStrength;
-				m_texts[0].text = healingIngredient.m_name;
+				//m_texts[0].text = healingIngredient.m_name;
 
 			}
 			else if (buffIngredient)
 			{
 				m_potionBeingCreated.m_buffType = buffIngredient.m_buffType;
-				m_texts[1].text = buffIngredient.m_name;
+				//m_texts[1].text = buffIngredient.m_name;
 
 				m_buffImage.gameObject.SetActive(true);
 				m_buffImage.sprite = buffIngredient.m_potionImage;
@@ -118,7 +118,7 @@ public class PotionMaker : MonoBehaviour, IDropHandler
 			else if (colorIngredient)
 			{
 				m_potionBeingCreated.m_potionColor = colorIngredient.m_potionColor;
-				m_texts[2].text = colorIngredient.m_name;
+				//m_texts[2].text = colorIngredient.m_name;
 
 				m_image.sprite = colorIngredient.m_potionImage;
 
