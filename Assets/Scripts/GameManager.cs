@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using System.Linq;
 
 public class HeroInDungeon
 {
@@ -46,6 +47,9 @@ public class GameManager : MonoBehaviour
 	private float m_winningAmount = 200.0f;
 
 	[SerializeField]
+	private List<Ingredient> m_allIngredients = new List<Ingredient>();
+
+	[SerializeField]
 	private List<Sprite> m_lightArmorHeroSprites = new List<Sprite>();
 
 	[SerializeField]
@@ -78,7 +82,7 @@ public class GameManager : MonoBehaviour
 	private float m_highestEarnings;
 	private Potion m_chosenPotion;
 
-	private int m_bidAmount = 0;
+	private int m_currentBidAmount = 0;
 
 	private float m_timeElapsed = 0.0f;
 	private bool m_hasGameStarted = false;
@@ -116,7 +120,7 @@ public class GameManager : MonoBehaviour
 		m_dungeonHeroes.Clear();
 		m_heroes.Clear();
 		m_currentHero = null;
-		m_bidAmount = 0;
+		m_currentBidAmount = 0;
 		m_timeElapsed = 0.0f;
 		m_currentMoney = m_startingMoney;
 		m_highestEarnings = m_startingMoney;
@@ -128,7 +132,7 @@ public class GameManager : MonoBehaviour
 
 	void DisplayHero()
 	{
-		m_bidAmount = 0;
+		m_currentBidAmount = 0;
 		m_chosenPotion = new Potion(true);
 
 		Hero newHero = GenerateNewHero();
@@ -142,13 +146,19 @@ public class GameManager : MonoBehaviour
 		m_shouldPlayTutorial = newValue;
 	}
 
+	public List<T> GetIngredientsOfType<T>()
+	{
+		return m_allIngredients.FindAll(ingredient => ingredient is T).Cast<T>().ToList();
+	}
+
 	Hero GenerateNewHero()
 	{
 		Hero newHero = new Hero();
-		HeroStats newHeroStats = new HeroStats();
-
-		newHeroStats.m_armorType = (ArmorType) Random.Range(0, 3);
-		newHeroStats.m_weaponType = (WeaponType) Random.Range(0, 3);
+		HeroStats newHeroStats = new HeroStats
+		{
+			m_armorType = (ArmorType)Random.Range(0, 3),
+			m_weaponType = (WeaponType)Random.Range(0, 3)
+		};
 
 		if (newHeroStats.m_armorType == ArmorType.HeavyArmor)
 		{
@@ -159,33 +169,18 @@ public class GameManager : MonoBehaviour
 			newHero.m_heroSprite = m_lightArmorHeroSprites[Random.Range(0, m_lightArmorHeroSprites.Count)];
 		}
 
-		int heroMaxHP = 4;
-		int heroMaxHPLevel = Random.Range(0, 3);
-		switch (heroMaxHPLevel)
-		{
-			case 0:
-				heroMaxHP = 8;
-				break;
-			case 1:
-				heroMaxHP = 10;
-				break;
-			case 2:
-				heroMaxHP = 12;
-				break;
-		}
-
-		newHeroStats.m_maxHP = heroMaxHP;
-		newHeroStats.m_currentHP = Random.Range(1, heroMaxHP + 1);
+		newHeroStats.m_maxHP = finalStatSettings.m_heroMaxHPOptions[Random.Range(0, finalStatSettings.m_heroMaxHPOptions.Count)]; ;
+		newHeroStats.m_currentHP = Random.Range(1, newHeroStats.m_maxHP + 1);
 
 		newHero.m_heroStats = newHeroStats;
-		newHero.m_wantedPotion = new Potion();
+		newHero.m_wantedPotion = new Potion(true);
 
 		return newHero;
 	}
 
 	public void SetBidAmount(int amount)
 	{
-		m_bidAmount = amount;
+		m_currentBidAmount = amount;
 	}
 
 	public void SetFloorDeathGuess(int floor)
@@ -242,18 +237,17 @@ public class GameManager : MonoBehaviour
 		}
 	}
 
-	public void SetCreatedPotion(HealingStrength strength, BuffType buffType, PotionColor potionColor)
+	public void SetCreatedPotion(Potion potion)
 	{
-		m_chosenPotion.m_healingStrength = strength;
-		m_chosenPotion.m_buffType = buffType;
-		m_chosenPotion.m_potionColor = potionColor;
+		m_chosenPotion.m_healingIngredient = potion.m_healingIngredient;
+		m_chosenPotion.m_buffIngredient = potion.m_buffIngredient;
+		m_chosenPotion.m_colorIngredient = potion.m_colorIngredient;
 
 		m_currentHero.m_createdPotion = m_chosenPotion;
-		// Probably display both of these separately
+
 		int moneyGained = Potion.GetNumMatchingIngredidents(m_currentHero.m_createdPotion, m_currentHero.m_wantedPotion) * m_rightIngredientPayment;
 
 		AddMoney(moneyGained);
-
 		OnPotionGiven?.Invoke();
 	}
 
@@ -263,11 +257,11 @@ public class GameManager : MonoBehaviour
 		HeroInDungeon heroInDungeon = new HeroInDungeon(m_currentHero);
 		m_dungeonHeroes.Add(new KeyValuePair<HeroInDungeon, float>(heroInDungeon, m_dungeonCountdown));
 		OnAddHeroToDungeon?.Invoke(new KeyValuePair<HeroInDungeon, float>(heroInDungeon, m_dungeonCountdown));
-		heroInDungeon.m_bidAmount = m_bidAmount;
+		heroInDungeon.m_bidAmount = m_currentBidAmount;
 
 		float previousMoney = m_currentMoney;
 		// Subtract bid amount from money
-		AddMoney(-m_bidAmount);
+		AddMoney(-m_currentBidAmount);
 
 		OnMoneyChanged?.Invoke(previousMoney,m_currentMoney);
 
@@ -279,30 +273,18 @@ public class GameManager : MonoBehaviour
 
 	public void CalculateHeroResults(HeroInDungeon heroInDungeon)
 	{
-		float heroHPCalc = heroInDungeon.m_hero.m_heroStats.m_currentHP;
-		int maxHeroHP = heroInDungeon.m_hero.m_heroStats.m_maxHP;
+		HeroStats heroStats = heroInDungeon.m_hero.m_heroStats;
+		Potion createdPotion = heroInDungeon.m_hero.m_createdPotion;
 
-		switch (heroInDungeon.m_hero.m_createdPotion.m_healingStrength)
-		{
-			case HealingStrength.Weak:
-				heroHPCalc += 0.25f * maxHeroHP;
-				break;
-			case HealingStrength.Medium:
-				heroHPCalc += 0.50f * maxHeroHP;
-				break;
-			case HealingStrength.Strong:
-				heroHPCalc += maxHeroHP;
-				break;
-		}
+		float heroHPCalc = createdPotion.m_healingIngredient.m_amountHealed + heroStats.m_currentHP;
 
 		List<BaseModifier> baseModifiers = new List<BaseModifier>();
 
 		HealthModifier healthModifier = finalStatSettings.m_healthModifiers.Find(modifier => heroHPCalc >= modifier.min && heroHPCalc <= modifier.max);
-		BuffModifier buffModifier = finalStatSettings.m_buffModifiers.Find(modifier => modifier.buffType == heroInDungeon.m_hero.m_createdPotion.m_buffType);
+		BuffModifier buffModifier = finalStatSettings.m_buffModifiers.Find(modifier => modifier.buffIngredient == heroInDungeon.m_hero.m_createdPotion.m_buffIngredient);
 
 		Debug.Log("Health Modifier: HPCalc is between " + healthModifier.min + " and " + healthModifier.max + " and value is " + healthModifier.modifier);
-
-		Debug.Log("Buff Modifier: Type is " + buffModifier.buffType + " and value is " + buffModifier.modifier);
+		Debug.Log("Buff Modifier: Type is " + buffModifier.buffIngredient.m_name + " and value is " + buffModifier.modifier);
 
 		baseModifiers.Add(healthModifier);
 		baseModifiers.Add(buffModifier);
@@ -346,11 +328,11 @@ public class GameManager : MonoBehaviour
 		List<ItemAndBuffModifier> itemAndBuffModifiers = new List<ItemAndBuffModifier>();
 		List<ItemAndBuffModifier> allItemAndBuffModifiers = finalStatSettings.m_itemAndBuffModifiers;
 
-		BuffType buffType = heroInDungeon.m_hero.m_createdPotion.m_buffType;
+		BuffIngredient buffIngredient = createdPotion.m_buffIngredient;
 
 		foreach (var currentItemAndBuffModifier in allItemAndBuffModifiers)
 		{
-			if (buffType == currentItemAndBuffModifier.buffType)
+			if (buffIngredient == currentItemAndBuffModifier.buffIngredient)
 			{
 				if ((armorType == currentItemAndBuffModifier.armorType && currentItemAndBuffModifier.itemModifierState == ItemModifierState.UseArmor) ||
 					(weaponType == currentItemAndBuffModifier.weaponType && currentItemAndBuffModifier.itemModifierState == ItemModifierState.UseWeapon))
@@ -364,7 +346,7 @@ public class GameManager : MonoBehaviour
 					else
 						debug += currentItemAndBuffModifier.weaponType;
 
-					debug += " with " + currentItemAndBuffModifier.buffType + " and value is " + currentItemAndBuffModifier.modifier;
+					debug += " with " + currentItemAndBuffModifier.buffIngredient.m_name + " and value is " + currentItemAndBuffModifier.modifier;
 					Debug.Log(debug);
 				}
 			}
@@ -390,25 +372,13 @@ public class GameManager : MonoBehaviour
 		}
 		Debug.Log("Final Modifier: " + finalModifier);
 
-		if (finalModifier < 5)
+		foreach (var finalDeathFloor in finalStatSettings.m_finalModifierDeathFloors)
 		{
-			heroInDungeon.m_placeOfDeath = 1;
-		}
-		else if (finalModifier == 5)
-		{
-			heroInDungeon.m_placeOfDeath = 2;
-		}
-		else if (finalModifier == 6)
-		{
-			heroInDungeon.m_placeOfDeath = 3;
-		}
-		else if (finalModifier == 7)
-		{
-			heroInDungeon.m_placeOfDeath = 4;
-		}
-		else if (finalModifier < 10)
-		{
-			heroInDungeon.m_placeOfDeath = 5;
+			if (finalModifier >= finalDeathFloor.min && finalModifier <= finalDeathFloor.max)
+			{
+				heroInDungeon.m_placeOfDeath = finalDeathFloor.deathFloor;
+				break;
+			}
 		}
 
 		if (finalModifier > 9)
@@ -444,9 +414,7 @@ public class GameManager : MonoBehaviour
 	public void AddPaymentForHero(HeroInDungeon heroInDungeon)
 	{
 		KeyValuePair<HeroInDungeon, float> dungeonHero = m_dungeonHeroes.Find(hero => hero.Key == heroInDungeon);
-
 		AddMoney(heroInDungeon.m_MoneyWon);
-
 		dungeonHero.Key.m_shouldDelete = true;
 	}
 

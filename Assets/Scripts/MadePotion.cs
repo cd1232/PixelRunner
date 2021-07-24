@@ -8,26 +8,9 @@ using UnityEngine.UI;
 public class MadePotion : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
 	[SerializeField]
-	private Sprite m_damageSprite;
+	private Image m_buffImage;
 
-	[SerializeField]
-	private Sprite m_speedSprite;
-
-	[SerializeField]
-	private Sprite m_invincibleSprite;
-
-	[SerializeField]
-	private Sprite m_transparentSprite;
-
-	[SerializeField]
-	private Sprite m_redSprite;
-
-	[SerializeField]
-	private Sprite m_greenSprite;
-
-	[SerializeField]
-	private Sprite m_blueSprite;
-
+	[HideInInspector]
 	public Potion m_potion;
 
 	private Canvas m_canvas;
@@ -35,9 +18,6 @@ public class MadePotion : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
 	private CanvasGroup m_canvasGroup;
 	private RectTransform m_rectTransform;
 	private Image m_potionImage;
-
-	[SerializeField]
-	private Image m_buffImage;
 
 	private List<TextMeshProUGUI> m_texts = new List<TextMeshProUGUI>();
 
@@ -48,7 +28,6 @@ public class MadePotion : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
 	private Transform m_potionContainer;
 
 	private Vector3 m_oldAnchoredPosition;
-
 
 	void Awake()
 	{
@@ -78,43 +57,11 @@ public class MadePotion : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
 		m_potion = potion;
 		m_madePotionsParent = madePotionsParent;
 
-		m_texts[0].text = m_potion.m_healingStrength.ToString();
-		m_texts[1].text = m_potion.m_buffType.ToString();
+		m_texts[0].text = m_potion.m_healingIngredient.m_name;
+		m_texts[1].text = m_potion.m_buffIngredient.m_name;
 
-
-		m_buffImage.gameObject.SetActive(true);
-		switch (m_potion.m_buffType)
-		{
-			case BuffType.Nothing:
-				//m_buffImage.gameObject.SetActive(false);
-				break;
-			case BuffType.Speed:
-				m_buffImage.sprite = m_speedSprite;
-				break;
-			case BuffType.Damage:
-				m_buffImage.sprite = m_damageSprite;
-				break;
-			case BuffType.IronSkin:
-				m_buffImage.sprite = m_invincibleSprite;
-				break;
-		}
-
-
-		switch (m_potion.m_potionColor)
-		{
-			case PotionColor.Transparent:
-				m_potionImage.sprite = m_transparentSprite;
-				break;
-			case PotionColor.Red:
-				m_potionImage.sprite = m_redSprite;
-				break;
-			case PotionColor.Green:
-				m_potionImage.sprite = m_greenSprite;
-				break;
-			case PotionColor.Blue:
-				m_potionImage.sprite = m_blueSprite;
-				break;
-		}
+		m_buffImage.sprite = m_potion.m_buffIngredient.m_potionImage;
+		m_potionImage.sprite = m_potion.m_colorIngredient.m_potionImage;
 	}
 
 	private void OnDestroy()
@@ -126,7 +73,6 @@ public class MadePotion : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
 	{
 		m_canvasGroup.blocksRaycasts = false;
 		m_canvasGroup.alpha = 0.6f;
-		//transform.SetParent(m_canvas.transform);
 	}
 
 	public void OnDrag(PointerEventData eventData)
@@ -138,7 +84,6 @@ public class MadePotion : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
 	{
 		m_canvasGroup.blocksRaycasts = true;
 		m_canvasGroup.alpha = 1.0f;
-		//transform.SetParent(m_potionContainer);
 		m_rectTransform.anchoredPosition = m_oldAnchoredPosition;
 	}
 

@@ -102,62 +102,75 @@ MonoBehaviour:
   m_buffModifiers:
   - modifier: 1
     finalWord: -1
-    buffType: 1
+    buffIngredient: {fileID: 11400000, guid: 6bf5846ae5a6d4847a9f6aa65c118c3c, type: 2}
   - modifier: 1
     finalWord: -1
-    buffType: 3
+    buffIngredient: {fileID: 11400000, guid: 535dec97b71805b47be77544d64eb3f7, type: 2}
   - modifier: 1
     finalWord: -1
-    buffType: 2
-  - modifier: 0
-    finalWord: -1
-    buffType: 0
+    buffIngredient: {fileID: 11400000, guid: ea50691300d17b44f9aa4c984a6e5054, type: 2}
   m_itemAndBuffModifiers:
   - modifier: 1
     finalWord: 5
-    buffType: 3
+    buffIngredient: {fileID: 11400000, guid: ea50691300d17b44f9aa4c984a6e5054, type: 2}
     weaponType: 0
     armorType: 0
     itemModifierState: 0
   - modifier: 2
     finalWord: 6
-    buffType: 3
-    weaponType: 0
-    armorType: 0
-    itemModifierState: 1
-  - modifier: 2
-    finalWord: 6
-    buffType: 3
+    buffIngredient: {fileID: 11400000, guid: ea50691300d17b44f9aa4c984a6e5054, type: 2}
     weaponType: 0
     armorType: 0
     itemModifierState: 1
   - modifier: 2
     finalWord: 7
-    buffType: 1
+    buffIngredient: {fileID: 11400000, guid: 535dec97b71805b47be77544d64eb3f7, type: 2}
     weaponType: 1
     armorType: 0
     itemModifierState: 0
   - modifier: 1
     finalWord: 8
-    buffType: 1
+    buffIngredient: {fileID: 11400000, guid: 535dec97b71805b47be77544d64eb3f7, type: 2}
     weaponType: 1
     armorType: 1
     itemModifierState: 1
   - modifier: 2
     finalWord: 9
-    buffType: 2
+    buffIngredient: {fileID: 11400000, guid: 6bf5846ae5a6d4847a9f6aa65c118c3c, type: 2}
     weaponType: 2
     armorType: 1
     itemModifierState: 0
   - modifier: 1
     finalWord: 10
-    buffType: 2
+    buffIngredient: {fileID: 11400000, guid: 6bf5846ae5a6d4847a9f6aa65c118c3c, type: 2}
     weaponType: 2
     armorType: 2
     itemModifierState: 1
-  m_itemAndItemModifiers: []
   m_betRewards:
   - difference: 0
     multiplier: 2
   - difference: 1
     multiplier: 1.5
+  m_noHealHint: No Healing
+  m_noBuffHint: No Buff
+  m_noColorHint: Transparent
+  m_heroMaxHPOptions: 080000000a0000000c000000
+  m_finalModifierDeathFloors:
+  - min: -100
+    max: 4
+    deathFloor: 1
+  - min: 5
+    max: 5
+    deathFloor: 2
+  - min: 6
+    max: 6
+    deathFloor: 3
+  - min: 7
+    max: 7
+    deathFloor: 4
+  - min: 8
+    max: 9
+    deathFloor: 5
+  - min: 10
+    max: 100
+    deathFloor: 6

@@ -10,10 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 16ed7189e2b686b40aa8f9fb7fe03e03, type: 3}
-  m_Name: InvincibleIngredient
+  m_Name: IronSkinIngredient
   m_EditorClassIdentifier: 
   m_name: Iron Skin
+  m_hint: gives me iron skin
   m_image: {fileID: 21300000, guid: 7fb7c8436213abb4aa065387f19ada97, type: 3}
   m_potionImage: {fileID: 21300000, guid: f67f42154e8b95c4ead849d3fec14db4, type: 3}
+  m_hintColor: {r: 0.2509804, g: 0.34509805, b: 0.3921569, a: 0}
   m_positionInBasket: {x: 256, y: -168}
-  m_buffType: 3

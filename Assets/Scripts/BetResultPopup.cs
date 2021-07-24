@@ -79,31 +79,14 @@ public class BetResultPopup : MonoBehaviour
 
 		m_customerContainer.SetCustomer(heroInDungeon.m_hero);
 
-		m_potionStrength.text = createdPotion.m_healingStrength.ToString();
-		m_potionBuff.text =  createdPotion.m_buffType.ToString();
-
-		switch (createdPotion.m_potionColor)
-		{
-			case PotionColor.Transparent:
-				m_potionImage.sprite = m_transparentSprite;
-				break;
-			case PotionColor.Red:
-				m_potionImage.sprite = m_redSprite;
-				break;
-			case PotionColor.Green:
-				m_potionImage.sprite = m_greenSprite;
-				break;
-			case PotionColor.Blue:
-				m_potionImage.sprite = m_blueSprite;
-				break;
-			default:
-				break;
-		}
+		m_potionStrength.text = createdPotion.m_healingIngredient.m_name;
+		m_potionBuff.text = createdPotion.m_buffIngredient.m_name;
+		m_potionImage.sprite = createdPotion.m_colorIngredient.m_potionImage;
 
 		if (heroInDungeon.m_hero.m_selectedFloor > 0)
 		{
 			m_floorBet.text = "$" + heroInDungeon.m_bidAmount.ToString("F0") + " on floor " + heroInDungeon.m_hero.m_selectedFloor;
-			m_amountWon.text = "Reward: $" + heroInDungeon.m_MoneyWon.ToString("F2");// + " ($" + heroInDungeon.m_bidAmount + "x" + heroInDungeon.m_rewardMultiplier.ToString("F2") + ")";
+			m_amountWon.text = "Reward: $" + heroInDungeon.m_MoneyWon.ToString("F2");
 
 			if (heroInDungeon.m_placeOfDeath != heroInDungeon.m_hero.m_selectedFloor)
 			{
@@ -125,6 +108,7 @@ public class BetResultPopup : MonoBehaviour
 		if (heroInDungeon.m_hasDungeonBeenBeaten)
 		{
 			m_placeOfDeath.text = "The hero didn't die!";
+			m_amountWon.text = "Lost: $" + Math.Abs(heroInDungeon.m_MoneyWon).ToString("F2");
 			m_finalWords.text = "";
 			m_audioSource.clip = m_bad;
 		}
@@ -132,7 +116,15 @@ public class BetResultPopup : MonoBehaviour
 		{
 			m_placeOfDeath.text = "They died on floor " + heroInDungeon.m_placeOfDeath;
 			m_finalWords.text = "Final Words: " + heroInDungeon.m_finalWords;
-			m_audioSource.clip = m_good;
+
+			if (heroInDungeon.m_MoneyWon > 0)
+			{
+				m_audioSource.clip = m_good;
+			}
+			else
+			{
+				m_audioSource.clip = m_bad;
+			}
 		}
 
 		gameObject.SetActive(true);

@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: DamageIngredient
   m_EditorClassIdentifier: 
   m_name: Strength
+  m_hint: makes me Strong
   m_image: {fileID: 21300000, guid: 9179fe9d4c8161b439af5ba7291c60df, type: 3}
   m_potionImage: {fileID: 21300000, guid: 858b5cda06a764645bab2afd7d3de7d6, type: 3}
+  m_hintColor: {r: 0.90196085, g: 0.7803922, b: 0.5294118, a: 0}
   m_positionInBasket: {x: 0, y: -168}
-  m_buffType: 2

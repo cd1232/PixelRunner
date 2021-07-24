@@ -35,13 +35,13 @@ public class ItemModifier : BaseModifier
 [Serializable]
 public class BuffModifier : BaseModifier
 {
-	public BuffType buffType;
+	public BuffIngredient buffIngredient;
 }
 
 [Serializable]
 public class ItemAndBuffModifier : BaseModifier
 {
-	public BuffType buffType;
+	public BuffIngredient buffIngredient;
 	public WeaponType weaponType;
 	public ArmorType armorType;
 	public ItemModifierState itemModifierState;
@@ -54,6 +54,14 @@ public class BetReward
 	public float multiplier = 1.0f;
 }
 
+[Serializable]
+public class FinalModifierDeathFloor
+{
+	public int min = 0;
+	public int max = 0;
+	public int deathFloor = 0;
+}
+
 [CreateAssetMenu(fileName = "finalStatSettings", menuName = "ScriptableObjects/FinalStatSettings", order = 2)]
 public class FinalStatSettings : ScriptableObject
 {
@@ -63,7 +71,12 @@ public class FinalStatSettings : ScriptableObject
 	public List<BuffModifier> m_buffModifiers = new List<BuffModifier>();
 	public List<ItemAndBuffModifier> m_itemAndBuffModifiers = new List<ItemAndBuffModifier>();
 
-	public List<BaseModifier> m_baseModifiers = new List<BaseModifier>();
-
 	public List<BetReward> m_betRewards = new List<BetReward>();
+
+	public string m_noHealHint = "No Healing";
+	public string m_noBuffHint = "No Buff";
+	public string m_noColorHint = "Transparent";
+
+	public List<int> m_heroMaxHPOptions = new List<int>();
+	public List<FinalModifierDeathFloor> m_finalModifierDeathFloors = new List<FinalModifierDeathFloor>();
 }

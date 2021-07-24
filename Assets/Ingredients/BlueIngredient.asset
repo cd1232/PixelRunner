@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: BlueIngredient
   m_EditorClassIdentifier: 
   m_name: Blue
+  m_hint: Blue
   m_image: {fileID: 21300000, guid: 660f8862715f8594082628cd49cb7cc0, type: 3}
   m_potionImage: {fileID: 21300000, guid: 871397be4d3543e4d825e4e9eab40424, type: 3}
+  m_hintColor: {r: 0.31764707, g: 0.27450982, b: 0.86274517, a: 0}
   m_positionInBasket: {x: 256, y: -336}
-  m_potionColor: 3

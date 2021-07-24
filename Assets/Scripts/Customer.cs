@@ -95,15 +95,6 @@ public class Customer : MonoBehaviour, IDropHandler
 
 			Potion potion = givenPotion.m_potion;
 
-			if (m_wantedPotion == null)
-			{
-				Debug.Log("Wanted potion is null");
-			}
-			else if (potion == null)
-			{
-				Debug.Log("given potion is null");
-			}
-
 			if (m_customerComments)
 			{
 				int matchingIngredients = Potion.GetNumMatchingIngredidents(potion, m_wantedPotion);
@@ -126,7 +117,7 @@ public class Customer : MonoBehaviour, IDropHandler
 			}			
 
 			m_hasReceivedPotion = true;
-			GameManager.GetInstance().SetCreatedPotion(potion.m_healingStrength, potion.m_buffType, potion.m_potionColor);
+			GameManager.GetInstance().SetCreatedPotion(potion);
 			Destroy(givenPotion.gameObject);
 		}
 	}
@@ -146,16 +137,18 @@ public class Customer : MonoBehaviour, IDropHandler
 			m_wantedPotion = hero.m_wantedPotion;
 			HeroStats stats = hero.m_heroStats;
 
-			HealPowerText healPowerText = m_potionTextSettings.m_healPowerText.Find(healPower => healPower.healPower == m_wantedPotion.m_healingStrength);
-			BuffText buffTextSetting = m_potionTextSettings.m_buffText.Find(buff => buff.buffType == m_wantedPotion.m_buffType);
-			PotionColorText potionColorTextSetting = m_potionTextSettings.m_potionColorText.Find(potionColor => potionColor.color == m_wantedPotion.m_potionColor);
-
 			string startText = m_potionTextSettings.m_startText;
-			string healingStrengthText = healPowerText != null ? healPowerText.text : "no healing";
-			string buffText = buffTextSetting != null ? buffTextSetting.text : "no buff";
-			string potionColorText = potionColorTextSetting != null ? potionColorTextSetting.text : "no color";
+			string healingStrengthText = m_wantedPotion.m_healingIngredient != null ? m_wantedPotion.m_healingIngredient.m_hint : "no healing";
+			string buffText = m_wantedPotion.m_buffIngredient != null ? m_wantedPotion.m_buffIngredient.m_hint : "no buff";
+			string potionColorText = m_wantedPotion.m_colorIngredient != null ? m_wantedPotion.m_colorIngredient.m_hint : "no color";
 
-			string textToDisplay = startText + healingStrengthText + " and " + buffText + ". Can you make it " + potionColorText + "?";
+			Color healingStrengthHintColor = m_wantedPotion.m_healingIngredient.m_hintColor;
+			Color buffHintColor = m_wantedPotion.m_buffIngredient.m_hintColor;
+			Color potionHintColor = m_wantedPotion.m_colorIngredient.m_hintColor;
+			
+			string textToDisplay = startText + "<#" + ColorUtility.ToHtmlStringRGB(healingStrengthHintColor) + ">" + healingStrengthText + "</color> and <#" + ColorUtility.ToHtmlStringRGB(buffHintColor) +">" + buffText + "</color>.";
+			textToDisplay += " Can you make it <#" + ColorUtility.ToHtmlStringRGB(potionHintColor) + ">" + potionColorText + "</color>?";
+
 			m_originalCustomerComments = textToDisplay;
 
 			if (m_customerComments)

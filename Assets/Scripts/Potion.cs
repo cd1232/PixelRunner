@@ -1,83 +1,33 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System;
-using Random = UnityEngine.Random;
-
-[Serializable]
-public enum HealingStrength
-{
-	None,
-	Weak,
-	Medium,
-	Strong
-};
-
-[Serializable]
-public enum PotionColor
-{
-	Transparent,
-	Red,
-	Green,
-	Blue
-};
-
-[Serializable]
-public enum BuffType
-{
-	Nothing,
-	Speed,
-	Damage,
-	IronSkin
-};
+using System.Collections.Generic;
 
 public class Potion
 {
-	public Potion(bool isNothing)
+	public Potion(bool shouldGenerateRandom)
 	{
-		if (isNothing)
+		if (shouldGenerateRandom)
 		{
-			Reset();
+			List<HealingIngredient> healingIngredients = GameManager.GetInstance().GetIngredientsOfType<HealingIngredient>();
+			List<BuffIngredient> buffIngredients = GameManager.GetInstance().GetIngredientsOfType<BuffIngredient>();
+			List<ColorIngredient> colorIngredients = GameManager.GetInstance().GetIngredientsOfType<ColorIngredient>();
+
+			m_healingIngredient = healingIngredients[Random.Range(0, healingIngredients.Count)];
+			m_buffIngredient = buffIngredients[Random.Range(0, buffIngredients.Count)];
+			m_colorIngredient = colorIngredients[Random.Range(0, colorIngredients.Count)];
 		}
-	}
-
-	public Potion()
-	{
-		m_healingStrength = (HealingStrength)Random.Range(0, 4);
-		m_potionColor = (PotionColor)Random.Range(0, 4);
-		m_buffType = (BuffType)Random.Range(0, 4);
-	}
-
-	public Potion(HealingStrength healingStrength, PotionColor potionColor, BuffType buffType)
-	{
-		m_healingStrength = healingStrength;
-		m_potionColor = potionColor;
-		m_buffType = buffType;
 	}
 
 	public static int GetNumMatchingIngredidents(Potion p1, Potion p2)
 	{
 		int numMatching = 0;
-		numMatching += p1.m_healingStrength == p2.m_healingStrength && p1.m_healingStrength != HealingStrength.None ? 1 : 0;
-		numMatching += p1.m_buffType == p2.m_buffType && p1.m_buffType != BuffType.Nothing ? 1 : 0;
-		numMatching += p1.m_potionColor == p2.m_potionColor && p1.m_potionColor != PotionColor.Transparent ? 1 : 0;
+		numMatching += p1.m_healingIngredient == p2.m_healingIngredient && p1.m_healingIngredient != null ? 1 : 0;
+		numMatching += p1.m_buffIngredient == p2.m_buffIngredient && p1.m_buffIngredient != null ? 1 : 0;
+		numMatching += p1.m_colorIngredient == p2.m_colorIngredient && p1.m_colorIngredient != null ? 1 : 0;
 
 		return numMatching;
 	}
 
-	private void Reset()
-	{
-		m_healingStrength = HealingStrength.None;
-		m_potionColor = PotionColor.Transparent;
-		m_buffType = BuffType.Nothing;
-	}
-
-
-	// TODO use ingredients instead
-	public HealingIngredient healingIngredient;
-	public BuffIngredient buffIngredient;
-	public ColorIngredient colorIngredient;
-
-	public HealingStrength m_healingStrength;
-	public PotionColor m_potionColor;
-	public BuffType m_buffType;
+	public HealingIngredient m_healingIngredient;
+	public BuffIngredient m_buffIngredient;
+	public ColorIngredient m_colorIngredient;
 }

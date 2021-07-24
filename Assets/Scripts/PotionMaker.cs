@@ -82,35 +82,18 @@ public class PotionMaker : MonoBehaviour, IDropHandler
 
 			if (healingIngredient)
 			{
-				m_potionBeingCreated.m_healingStrength = healingIngredient.m_healingStrength;
+				m_potionBeingCreated.m_healingIngredient = healingIngredient;
 			}
 			else if (buffIngredient)
 			{
-				m_potionBeingCreated.m_buffType = buffIngredient.m_buffType;
-
+				m_potionBeingCreated.m_buffIngredient = buffIngredient;
 				m_buffImage.gameObject.SetActive(true);
 				m_buffImage.sprite = buffIngredient.m_potionImage;
-
-				switch (m_potionBeingCreated.m_buffType)
-				{
-					case BuffType.Nothing:
-						m_buffImage.gameObject.SetActive(false);
-						break;
-					case BuffType.Speed:
-						m_buffImage.sprite = m_speedSprite;
-						break;
-					case BuffType.Damage:
-						m_buffImage.sprite = m_damageSprite;
-						break;
-					case BuffType.IronSkin:
-						m_buffImage.sprite = m_invincibleSprite;
-						break;
-				}
 
 			}
 			else if (colorIngredient)
 			{
-				m_potionBeingCreated.m_potionColor = colorIngredient.m_potionColor;
+				m_potionBeingCreated.m_colorIngredient = colorIngredient;
 				m_image.sprite = colorIngredient.m_potionImage;
 			}
 		}		

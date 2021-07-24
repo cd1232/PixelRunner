@@ -53,6 +53,18 @@ public class EndScreen : MonoBehaviour
 			m_subHeading.text = "You've ran out of money and been replaced";
 		}
 
-		m_timer.text = "Elapsed Time: " + gameManager.GetTimeElapsed();
+		float timeElapsed = gameManager.GetTimeElapsed();
+		int minutes = 0;
+		int seconds = 0;
+
+		while (timeElapsed >= 60)
+		{
+			minutes++;
+			timeElapsed -= 60;
+		}
+
+		seconds = (int)timeElapsed;
+
+		m_timer.text = "Elapsed Time: " + minutes + " mins " + seconds + " secs";
 	}
 }
