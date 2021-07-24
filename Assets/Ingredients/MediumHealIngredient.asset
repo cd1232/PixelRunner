@@ -16,6 +16,6 @@ MonoBehaviour:
   m_hint: moderately heals me
   m_image: {fileID: 21300000, guid: 9b818af3294d1e841929e69ae7a89a6d, type: 3}
   m_potionImage: {fileID: 0}
-  m_hintColor: {r: 0.5882353, g: 0.75294125, b: 0.41176474, a: 0}
+  m_hintColor: {r: 0.23529412, g: 0.5176471, b: 0.30588236, a: 0}
   m_positionInBasket: {x: 128, y: 0}
   m_amountHealed: 4
