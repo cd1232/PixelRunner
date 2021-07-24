@@ -42,16 +42,6 @@ public class BetResultPopup : MonoBehaviour
 	[SerializeField]
 	private Customer m_customerContainer;
 
-	//TODO make this better when potions use ingredients
-	[SerializeField]
-	private Sprite m_redSprite;
-
-	[SerializeField]
-	private Sprite m_greenSprite;
-
-	[SerializeField]
-	private Sprite m_blueSprite;
-
 	[SerializeField]
 	private Sprite m_transparentSprite;
 
@@ -79,9 +69,17 @@ public class BetResultPopup : MonoBehaviour
 
 		m_customerContainer.SetCustomer(heroInDungeon.m_hero);
 
-		m_potionStrength.text = createdPotion.m_healingIngredient.m_name;
-		m_potionBuff.text = createdPotion.m_buffIngredient.m_name;
-		m_potionImage.sprite = createdPotion.m_colorIngredient.m_potionImage;
+		m_potionStrength.text = createdPotion.m_healingIngredient ? createdPotion.m_healingIngredient.m_name : "No Healing";
+		m_potionBuff.text = createdPotion.m_buffIngredient ? createdPotion.m_buffIngredient.m_name : "No Buff";
+
+		if (createdPotion.m_colorIngredient)
+		{
+			m_potionImage.sprite = createdPotion.m_colorIngredient.m_potionImage;
+		}
+		else
+		{
+			m_potionImage.sprite = m_transparentSprite;
+		}
 
 		if (heroInDungeon.m_hero.m_selectedFloor > 0)
 		{

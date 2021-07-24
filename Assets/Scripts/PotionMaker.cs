@@ -17,25 +17,7 @@ public class PotionMaker : MonoBehaviour, IDropHandler
 	private MadePotionsList m_madePotionsList;
 
 	[SerializeField]
-	private Sprite m_damageSprite;
-
-	[SerializeField]
-	private Sprite m_speedSprite;
-
-	[SerializeField]
-	private Sprite m_invincibleSprite;
-
-	[SerializeField]
 	private Sprite m_transparentSprite;
-
-	[SerializeField]
-	private Sprite m_redSprite;
-
-	[SerializeField]
-	private Sprite m_greenSprite;
-
-	[SerializeField]
-	private Sprite m_blueSprite;
 
 	private AudioSource m_audioSource;
 	private Potion m_potionBeingCreated;
@@ -49,7 +31,7 @@ public class PotionMaker : MonoBehaviour, IDropHandler
 
 	public void Start()
 	{
-		m_potionBeingCreated = new Potion(true);
+		m_potionBeingCreated = new Potion(false);
 		m_buffImage.gameObject.SetActive(false);
 	}
 
@@ -57,7 +39,7 @@ public class PotionMaker : MonoBehaviour, IDropHandler
 	{
 		if (m_madePotionsList.AddPotion(m_potionBeingCreated))
 		{
-			m_potionBeingCreated = new Potion(true);
+			m_potionBeingCreated = new Potion(false);
 			m_buffImage.gameObject.SetActive(false);
 			m_image.sprite = m_transparentSprite;
 		}

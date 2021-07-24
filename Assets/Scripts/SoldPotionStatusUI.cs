@@ -16,9 +16,37 @@ public class SoldPotionStatusUI : MonoBehaviour
 
 	public void SetSoldPotionText(Potion potion)
 	{
-		m_healingStrength.text = potion.m_healingIngredient.m_name;
-		m_buffType.text = potion.m_buffIngredient.name;
-		m_color.text = potion.m_colorIngredient.name;
+		FinalStatSettings finalStatSettings = GameManager.GetInstance().GetStatSettings();
+
+		if (potion.m_healingIngredient)
+		{
+			m_healingStrength.text = potion.m_healingIngredient.m_name;
+		}
+		else
+		{
+			m_healingStrength.text = finalStatSettings.m_noHealHint;
+
+		}
+
+		if (potion.m_buffIngredient)
+		{
+			m_buffType.text = potion.m_buffIngredient.name;
+		}
+		else
+		{
+			m_buffType.text = finalStatSettings.m_noBuffHint;
+
+		}
+
+		if (potion.m_colorIngredient)
+		{
+			m_color.text = potion.m_colorIngredient.name;
+		}
+		else
+		{
+			m_color.text = finalStatSettings.m_noColorHint;
+		}
+
 	}
 
 	public void ResetPotionText()

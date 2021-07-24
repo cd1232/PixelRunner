@@ -92,13 +92,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff3cfe15690f07541bce3dc7d21ea022, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_damageSprite: {fileID: 21300000, guid: 858b5cda06a764645bab2afd7d3de7d6, type: 3}
-  m_speedSprite: {fileID: 21300000, guid: 7ae3c630565de1e4ea8cd73d3922d33a, type: 3}
-  m_invincibleSprite: {fileID: 21300000, guid: f67f42154e8b95c4ead849d3fec14db4, type: 3}
-  m_transparentSprite: {fileID: 21300000, guid: 931969e7189cbb04f90dc0c3f32fda37, type: 3}
-  m_redSprite: {fileID: 21300000, guid: e247816735ed2f84c96dc3136993463e, type: 3}
-  m_greenSprite: {fileID: 21300000, guid: 8e5f56705253fc34e8898a1270fd1dfe, type: 3}
-  m_blueSprite: {fileID: 21300000, guid: 871397be4d3543e4d825e4e9eab40424, type: 3}
   m_buffImage: {fileID: 3789448576697209981}
 --- !u!225 &-6461348731876375904
 CanvasGroup:

@@ -57,11 +57,31 @@ public class MadePotion : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
 		m_potion = potion;
 		m_madePotionsParent = madePotionsParent;
 
-		m_texts[0].text = m_potion.m_healingIngredient.m_name;
-		m_texts[1].text = m_potion.m_buffIngredient.m_name;
+		if (m_potion.m_healingIngredient)
+		{
+			Debug.Log("Setting healing ingredient on potion");
+			m_texts[0].text = m_potion.m_healingIngredient.m_name;
+		}
+		else
+		{
+			m_texts[0].text = GameManager.GetInstance().GetStatSettings().m_noHealHint;
 
-		m_buffImage.sprite = m_potion.m_buffIngredient.m_potionImage;
-		m_potionImage.sprite = m_potion.m_colorIngredient.m_potionImage;
+		}
+
+		if (m_potion.m_buffIngredient)
+		{
+			m_texts[1].text = m_potion.m_buffIngredient.m_name;
+			m_buffImage.sprite = m_potion.m_buffIngredient.m_potionImage;
+		}
+		else
+		{
+			m_texts[1].text = GameManager.GetInstance().GetStatSettings().m_noBuffHint;
+		}
+
+		if (m_potion.m_colorIngredient)
+		{
+			m_potionImage.sprite = m_potion.m_colorIngredient.m_potionImage;
+		}
 	}
 
 	private void OnDestroy()

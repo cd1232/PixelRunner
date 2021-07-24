@@ -151,6 +151,11 @@ public class GameManager : MonoBehaviour
 		return m_allIngredients.FindAll(ingredient => ingredient is T).Cast<T>().ToList();
 	}
 
+	public FinalStatSettings GetStatSettings()
+	{
+		return finalStatSettings;
+	}
+
 	Hero GenerateNewHero()
 	{
 		Hero newHero = new Hero();
@@ -276,19 +281,28 @@ public class GameManager : MonoBehaviour
 		HeroStats heroStats = heroInDungeon.m_hero.m_heroStats;
 		Potion createdPotion = heroInDungeon.m_hero.m_createdPotion;
 
-		float heroHPCalc = createdPotion.m_healingIngredient.m_amountHealed + heroStats.m_currentHP;
+		float heroHPCalc = heroStats.m_currentHP;
+		if (createdPotion.m_healingIngredient)
+		{
+			heroHPCalc += createdPotion.m_healingIngredient.m_amountHealed;
+		}
 
 		List<BaseModifier> baseModifiers = new List<BaseModifier>();
 
 		HealthModifier healthModifier = finalStatSettings.m_healthModifiers.Find(modifier => heroHPCalc >= modifier.min && heroHPCalc <= modifier.max);
 		BuffModifier buffModifier = finalStatSettings.m_buffModifiers.Find(modifier => modifier.buffIngredient == heroInDungeon.m_hero.m_createdPotion.m_buffIngredient);
 
-		Debug.Log("Health Modifier: HPCalc is between " + healthModifier.min + " and " + healthModifier.max + " and value is " + healthModifier.modifier);
-		Debug.Log("Buff Modifier: Type is " + buffModifier.buffIngredient.m_name + " and value is " + buffModifier.modifier);
+		if (healthModifier != null)
+		{
+			Debug.Log("Health Modifier: HPCalc is between " + healthModifier.min + " and " + healthModifier.max + " and value is " + healthModifier.modifier);
+			baseModifiers.Add(healthModifier);
+		}
 
-		baseModifiers.Add(healthModifier);
-		baseModifiers.Add(buffModifier);
-
+		if (buffModifier != null)
+		{
+			Debug.Log("Buff Modifier: Type is " + buffModifier.buffIngredient.m_name + " and value is " + buffModifier.modifier);
+			baseModifiers.Add(buffModifier);
+		}
 
 		List<ItemModifier> itemModifiers = new List<ItemModifier>();
 
