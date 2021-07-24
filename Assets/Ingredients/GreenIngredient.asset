@@ -16,5 +16,5 @@ MonoBehaviour:
   m_hint: Green
   m_image: {fileID: 21300000, guid: 5485361d64144c84ca2d1eb4669a5cc1, type: 3}
   m_potionImage: {fileID: 21300000, guid: 8e5f56705253fc34e8898a1270fd1dfe, type: 3}
-  m_hintColor: {r: 0.34117648, g: 0.627451, b: 0.29411766, a: 0}
+  m_hintColor: {r: 0.24705882, g: 0.84313726, b: 0.24705882, a: 0}
   m_positionInBasket: {x: 128, y: -336}

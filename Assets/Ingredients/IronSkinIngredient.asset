@@ -16,5 +16,5 @@ MonoBehaviour:
   m_hint: gives me iron skin
   m_image: {fileID: 21300000, guid: 7fb7c8436213abb4aa065387f19ada97, type: 3}
   m_potionImage: {fileID: 21300000, guid: f67f42154e8b95c4ead849d3fec14db4, type: 3}
-  m_hintColor: {r: 0.2509804, g: 0.34509805, b: 0.3921569, a: 0}
+  m_hintColor: {r: 0.44705883, g: 0.5137255, b: 0.61960787, a: 0}
   m_positionInBasket: {x: 256, y: -168}
