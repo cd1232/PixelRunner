@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,6 +5,9 @@ public class StartScreen : MonoBehaviour
 {
 	[SerializeField]
 	private GameObject m_creditsScreen;
+
+	[SerializeField]
+	private GameObject m_optionsScreen;
 
     public void StartGame()
 	{
@@ -21,6 +22,16 @@ public class StartScreen : MonoBehaviour
 	public void HideCredits()
 	{
 		m_creditsScreen.SetActive(false);
+	}
+
+	public void ShowOptions()
+	{
+		m_optionsScreen.SetActive(true);
+	}
+
+	public void HideOptions()
+	{
+		m_optionsScreen.SetActive(false);
 	}
 
 	public void QuitGame()
